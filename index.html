@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МБОУ СОШ №1 — Генератор Знаний</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-area">
+            <div class="emblem">🎓</div>
+            <div>
+                <h1>МБОУ СОШ №1</h1>
+                <p>Бесконечный генератор заданий</p>
+            </div>
+        </div>
+        <button id="themeToggle" class="theme-btn">🌙</button>
+    </header>
+
+    <main class="container">
+        <div class="sidebar">
+            <h2>Предметы</h2>
+            <nav id="subjectNav">
+                <button class="nav-btn active" data-subject="russian">📖 Русский язык</button>
+                <button class="nav-btn" data-subject="algebra">📐 Алгебра</button>
+                <button class="nav-btn" data-subject="geometry">📏 Геометрия</button>
+                <button class="nav-btn" data-subject="physics">⚛️ Физика</button>
+                <button class="nav-btn" data-subject="informatics">💻 Информатика</button>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Тема (любовь, диктант, функции, упростить, Пифагор...)">
+                <button id="searchBtn">🔍 Сгенерировать</button>
+            </div>
+            <div id="contentArea" class="content-area"></div>
+        </div>
+    </main>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
