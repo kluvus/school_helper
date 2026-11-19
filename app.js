@@ -5,13 +5,10 @@ const searchBtn = document.getElementById('searchBtn');
 const navBtns = document.querySelectorAll('.nav-btn');
 const themeToggle = document.getElementById('themeToggle');
 
-// =====================================================================
-// ВАЖНО: ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ОТ CLOUDFLARE WORKER
-// Пример: const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev";
-// =====================================================================
-const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/"; 
+const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/";
 
 let currentSubject = 'russian';
+let lastRequestTime = 0;
 
 themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -36,6 +33,14 @@ navBtns.forEach(btn => {
     });
 });
 
+function getGradeOptions(minGrade = 1, maxGrade = 11, defaultGrade = 8) {
+    let options = '';
+    for (let i = minGrade; i <= maxGrade; i++) {
+        options += `<option value="${i} класс" ${i === defaultGrade ? 'selected' : ''}>${i} класс</option>`;
+    }
+    return options;
+}
+
 function renderSubject(subject) {
     if (subject === 'russian') renderRussianMenu();
     else if (['algebra', 'geometry', 'physics', 'informatics'].includes(subject)) {
@@ -43,14 +48,11 @@ function renderSubject(subject) {
     }
 }
 
-// ==========================================
-// РУССКИЙ ЯЗЫК
-// ==========================================
 function renderRussianMenu() {
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>📖 Русский язык</h3>
-            <p>Выберите тип работы. Нейросеть напишет текст на любую тему.</p>
+            <p>Выберите тип работы. Нейросеть напишет текст строго по школьной программе для выбранного класса.</p>
             <div class="controls">
                 <button class="btn" onclick="renderRussianGenerator('essay')">📝 Сочинение на любую тему</button>
                 <button class="btn btn-outline" onclick="renderRussianGenerator('dictation')">✍️ Диктант на любую тему</button>
@@ -65,15 +67,12 @@ function renderRussianGenerator(type) {
     document.getElementById('russianResult').innerHTML = `
         <div class="generator-box" style="border-style:solid; text-align:left;">
             <h3>${isEssay ? '📝 Сочинение' : '✍️ Диктант'}</h3>
-            <p>Введите тему для генерации.</p>
-            <div class="controls" style="justify-content: flex-start;">
+            <p>Укажите класс и тему для генерации по программе ФГОС.</p>
+            <div class="controls" style="justify-content: flex-start; flex-wrap: wrap; gap: 0.6rem;">
+                <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
+                    ${getGradeOptions(1, 11, 8)}
+                </select>
                 <input type="text" id="themeInput" placeholder="Например: ${isEssay ? 'Роль книги в жизни человека' : 'Осень в лесу'}">
-                ${!isEssay ? `
-                <select id="dictLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
-                    <option value="5-7 класс">5-7 класс</option>
-                    <option value="8-9 класс" selected>8-9 класс</option>
-                    <option value="10-11 класс">10-11 класс</option>
-                </select>` : ''}
                 <button class="btn" id="genBtn" onclick="generateAIText('${type}')">Сгенерировать</button>
             </div>
             <div id="resultBox" style="margin-top: 1.5rem;"></div>
@@ -81,15 +80,12 @@ function renderRussianGenerator(type) {
     `;
 }
 
-// ==========================================
-// МАТЕМАТИКА, ФИЗИКА, ИНФОРМАТИКА
-// ==========================================
 function renderSubjectMenu(subject) {
     const config = {
-        algebra: { title: 'Алгебра', icon: '📐', types: ['Уравнения', 'Упростить выражение', 'Функции', 'Задачи на проценты', 'Прогрессии'] },
-        geometry: { title: 'Геометрия', icon: '📏', types: ['Треугольники', 'Окружность', 'Площади фигур', 'Векторы', 'Стереометрия'] },
-        physics: { title: 'Физика', icon: '⚛️', types: ['Кинематика', 'Динамика', 'Закон Ома', 'Мощность', 'Плотность', 'Тепловые явления'] },
-        informatics: { title: 'Информатика', icon: '💻', types: ['Системы счисления', 'Логика', 'Алгоритмы', 'Объём информации'] }
+        algebra: { title: 'Алгебра (Математика)', icon: '📐', minGrade: 1, defaultGrade: 8, types: ['Уравнения', 'Упростить выражение', 'Функции', 'Задачи на проценты', 'Прогрессии', 'Дроби'] },
+        geometry: { title: 'Геометрия', icon: '📏', minGrade: 1, defaultGrade: 8, types: ['Треугольники', 'Окружность', 'Площади фигур', 'Векторы', 'Стереометрия'] },
+        physics: { title: 'Физика', icon: '⚛️', minGrade: 7, defaultGrade: 8, types: ['Кинематика', 'Динамика', 'Закон Ома', 'Мощность', 'Плотность', 'Тепловые явления'] },
+        informatics: { title: 'Информатика', icon: '💻', minGrade: 1, defaultGrade: 8, types: ['Системы счисления', 'Логика', 'Алгоритмы', 'Объём информации'] }
     };
 
     const sub = config[subject];
@@ -98,9 +94,12 @@ function renderSubjectMenu(subject) {
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>${sub.icon} ${sub.title}</h3>
-            <p>Введите любую тему. ИИ придумает задачу и решит её.</p>
+            <p>Выберите класс и тему. ИИ составит задачу по школьной программе и распишет решение.</p>
             <div class="controls" style="margin-bottom: 1rem;">${buttonsHtml}</div>
-            <div class="controls" style="justify-content: center; margin-top: 1.5rem;">
+            <div class="controls" style="justify-content: center; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem;">
+                <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
+                    ${getGradeOptions(sub.minGrade, 11, sub.defaultGrade)}
+                </select>
                 <input type="text" id="themeInput" placeholder="Своя тема...">
                 <select id="taskComplexity" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
                     <option value="лёгкая">Лёгкая</option>
@@ -114,11 +113,19 @@ function renderSubjectMenu(subject) {
     `;
 }
 
-// ==========================================
-// ГЕНЕРАТОР ИИ
-// ==========================================
+function formatMathText(text) {
+    return text
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, ' × ')
+        .replace(/(\d+)\s*\/\s*(\d+)/g, '$1 ÷ $2')
+        .replace(/\^2/g, '²')
+        .replace(/\^3/g, '³');
+}
+
 async function generateAIText(type) {
     const themeInput = document.getElementById('themeInput').value.trim();
+    const gradeEl = document.getElementById('gradeLevel');
+    const grade = gradeEl ? gradeEl.value : '8 класс';
     const resultBox = document.getElementById('resultBox');
     const btn = document.getElementById('genBtn');
 
@@ -127,25 +134,29 @@ async function generateAIText(type) {
         return;
     }
 
-    if (PROXY_URL.includes("ВАША_ССЫЛКА")) {
-        resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Вы не настроили Cloudflare Worker. Вставьте ссылку в app.js.</div>`;
+    const now = Date.now();
+    if (now - lastRequestTime < 5000) {
+        alert('Подождите 5 секунд перед следующим запросом.');
         return;
     }
+    lastRequestTime = now;
 
     btn.textContent = 'ИИ думает...';
     btn.disabled = true;
-    resultBox.innerHTML = `<div class="task-display">Генерация по теме: "${themeInput}"...</div>`;
+    resultBox.innerHTML = `<div class="task-display">Генерация (${grade}) по теме: "${themeInput}"...</div>`;
+
+    const mathRule = `ВАЖНО: Пиши математические выражения красиво. Вместо звездочки (*) используй знак умножения (×). Вместо слэша (/) используй знак деления (÷) или двоеточие (:). Степени пиши символами (², ³) или словами. Строго соблюдай программу ФГОС для ${grade} и не используй формулы или термины из более старших классов.`;
 
     let prompt = "";
+    
     if (type === 'essay') {
-        prompt = `Напиши школьное сочинение-рассуждение на тему: "${themeInput}". Структура: вступление, 2-3 аргумента из литературы, заключение. Объем не менее 250 слов. Пиши на русском языке.`;
+        prompt = `Ты опытный учитель русского языка и литературы. Напиши школьное сочинение-рассуждение для ученика (${grade}) на тему: "${themeInput}". Соблюдай требования ФГОС и уровень словарного запаса, подходящий строго для ${grade}. Структура: вступление, 2 аргумента, заключение. Пиши на русском языке.`;
     } else if (type === 'dictation') {
-        const level = document.getElementById('dictLevel').value;
-        prompt = `Напиши текст для диктанта на тему: "${themeInput}". Уровень сложности: ${level}. Объем 120-150 слов. Соблюдай правила орфографии и пунктуации для этого класса. Просто текст, без заголовков.`;
+        prompt = `Ты опытный учитель русского языка. Напиши связный текст для диктанта для ученика (${grade}) на тему: "${themeInput}". Соблюдай правила орфографии, пунктуации и объем слов строго по стандартам ФГОС для ${grade}. Выведи только сам текст диктанта, без заголовков и пояснений.`;
     } else {
         const comp = document.getElementById('taskComplexity').value;
-        const subjectNames = { algebra: 'алгебры', geometry: 'геометрии', physics: 'физики', informatics: 'информатики' };
-        prompt = `Ты учитель ${subjectNames[type]}. Придумай задачу по теме "${themeInput}". Сложность: ${comp}. Сначала напиши текст задачи, затем напиши "РЕШЕНИЕ:" и распиши полное пошаговое решение с формулами и объяснениями. Пиши на русском языке.`;
+        const subjectNames = { algebra: 'математики и алгебры', geometry: 'геометрии', physics: 'физики', informatics: 'информатики' };
+        prompt = `Ты опытный учитель ${subjectNames[type]}. Придумай учебную задачу для ученика (${grade}) по теме "${themeInput}". Сложность: ${comp}. Сначала напиши условие задачи, затем напиши "РЕШЕНИЕ:" и распиши подробное пошаговое решение с формулами и объяснениями, понятными ученику в ${grade}. ${mathRule} Пиши на русском языке.`;
     }
 
     try {
@@ -158,7 +169,9 @@ async function generateAIText(type) {
         const data = await res.json();
         
         if (data.text) {
-            let displayHtml = data.text.replace(/\n/g, '<br>');
+            let cleanText = (type !== 'essay' && type !== 'dictation') ? formatMathText(data.text) : data.text;
+            let displayHtml = cleanText.replace(/\n/g, '<br>');
+
             if (type !== 'essay' && type !== 'dictation') {
                 displayHtml = displayHtml.replace(/РЕШЕНИЕ:/gi, '<br><br><strong style="color:var(--primary); font-size:1.2rem;">Решение:</strong><br>');
             }
@@ -174,19 +187,23 @@ async function generateAIText(type) {
             resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка ИИ. Попробуйте еще раз.</div>`;
         }
     } catch (error) {
-        resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка сети. Проверьте прокси.</div>`;
+        resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка сети. Проверьте подключение.</div>`;
     } finally {
         btn.textContent = 'Сгенерировать';
         btn.disabled = false;
     }
 }
 
-// ==========================================
-// ЧАТ ИИ
-// ==========================================
 async function askAI() {
     const input = document.getElementById('aiInput').value.trim();
     if (!input) return;
+
+    const now = Date.now();
+    if (now - lastRequestTime < 5000) {
+        alert('Подождите 5 секунд перед следующим вопросом.');
+        return;
+    }
+    lastRequestTime = now;
 
     const btn = document.getElementById('aiBtn');
     const responseBox = document.getElementById('aiResponse');
@@ -196,15 +213,8 @@ async function askAI() {
     responseBox.style.display = 'block';
     responseBox.textContent = 'Нейросеть обрабатывает запрос...';
 
-    if (PROXY_URL.includes("ВАША_ССЫЛКА")) {
-        responseBox.textContent = 'Ошибка: Ссылка на Cloudflare Worker не вставлена в app.js.';
-        btn.textContent = 'Спросить';
-        btn.disabled = false;
-        return;
-    }
-
     try {
-        const fullPrompt = `Ты — умный помощник учителя. Отвечай кратко, по делу, на русском языке. Вопрос: ${input}`;
+        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай кратко, грамотно и по делу на русском языке. Вопрос: ${input}`;
 
         const res = await fetch(PROXY_URL, {
             method: 'POST',
@@ -215,7 +225,7 @@ async function askAI() {
         const data = await res.json();
         
         if (data.text) {
-            responseBox.textContent = data.text;
+            responseBox.textContent = formatMathText(data.text);
         } else {
             responseBox.textContent = 'Ошибка: ИИ не смог ответить.';
         }
@@ -227,9 +237,6 @@ async function askAI() {
     }
 }
 
-// ==========================================
-// ГЛОБАЛЬНЫЙ ПОИСК
-// ==========================================
 searchBtn.addEventListener('click', () => {
     const q = searchInput.value.toLowerCase().trim();
     if (!q) return;
@@ -264,5 +271,4 @@ searchBtn.addEventListener('click', () => {
     }
 });
 
-// Инициализация
 renderSubject('russian');
