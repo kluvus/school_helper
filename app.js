@@ -8,7 +8,7 @@ const themeToggle = document.getElementById('themeToggle');
 // =====================================================================
 // ВАЖНО: ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ОТ CLOUDFLARE WORKER
 // =====================================================================
-const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/"; 
+const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev"; 
 
 let currentSubject = 'russian';
 
