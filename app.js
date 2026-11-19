@@ -1,11 +1,16 @@
 const contentArea = document.getElementById('contentArea');
+const aiArea = document.getElementById('aiArea');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const navBtns = document.querySelectorAll('.nav-btn');
 const themeToggle = document.getElementById('themeToggle');
 
+// =====================================================================
+// ВАЖНО: ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ОТ CLOUDFLARE WORKER
+// =====================================================================
+const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/"; 
+
 let currentSubject = 'russian';
-let currentArgCount = 3;
 
 themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -18,233 +23,245 @@ navBtns.forEach(btn => {
         navBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentSubject = btn.dataset.subject;
-        renderSubject(currentSubject);
+        
+        if (currentSubject === 'ai') {
+            contentArea.style.display = 'none';
+            aiArea.style.display = 'block';
+        } else {
+            contentArea.style.display = 'block';
+            aiArea.style.display = 'none';
+            renderSubject(currentSubject);
+        }
     });
 });
 
 function renderSubject(subject) {
     if (subject === 'russian') renderRussianMenu();
-    else if (taskGenerators[subject]) renderTaskGenerator(subject);
+    else if (['algebra', 'geometry', 'physics', 'informatics'].includes(subject)) {
+        renderSubjectMenu(subject);
+    }
 }
 
-// --- РУССКИЙ ЯЗЫК ---
+// ==========================================
+// РУССКИЙ ЯЗЫК
+// ==========================================
 function renderRussianMenu() {
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>📖 Русский язык</h3>
-            <p>Выберите тип работы.</p>
+            <p>Выберите тип работы. Нейросеть напишет текст на любую тему.</p>
             <div class="controls">
-                <button class="btn" onclick="renderEssayGenerator()">📝 Сочинение</button>
-                <button class="btn btn-outline" onclick="renderDictation()">✍️ Диктант</button>
+                <button class="btn" onclick="renderRussianGenerator('essay')">📝 Сочинение на любую тему</button>
+                <button class="btn btn-outline" onclick="renderRussianGenerator('dictation')">✍️ Диктант на любую тему</button>
             </div>
         </div>
         <div id="russianResult"></div>
     `;
 }
 
-function renderDictation() {
+function renderRussianGenerator(type) {
+    const isEssay = type === 'essay';
     document.getElementById('russianResult').innerHTML = `
         <div class="generator-box" style="border-style:solid; text-align:left;">
-            <h3>✍️ Генератор диктантов</h3>
-            <p>Выберите сложность и количество предложений.</p>
-            <div style="margin-bottom: 1rem;">
-                <label>Сложность:</label>
-                <select id="dictLevel" style="padding: 0.5rem; border-radius: 8px; width: 100%; margin-top: 0.5rem;">
-                    <option value="easy">Лёгкий (5-7 класс)</option>
-                    <option value="medium" selected>Средний (8-9 класс)</option>
-                    <option value="hard">Сложный (10-11 класс)</option>
-                </select>
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label>Количество предложений: <span id="sentCountLabel">5</span></label>
-                <input type="range" id="sentCount" min="3" max="12" value="5" step="1" style="width: 100%;">
-            </div>
-            <button class="btn" onclick="generateDictation()">Сгенерировать</button>
-            <div id="dictationResult" style="margin-top: 1.5rem;"></div>
-        </div>
-    `;
-    document.getElementById('sentCount').addEventListener('input', (e) => {
-        document.getElementById('sentCountLabel').textContent = e.target.value;
-    });
-}
-
-function generateDictation() {
-    const level = document.getElementById('dictLevel').value;
-    const count = parseInt(document.getElementById('sentCount').value);
-    const pool = russianEngine.dictationPool[level];
-    const shuffled = [...pool].sort(() => 0.5 - Math.random());
-    const text = shuffled.slice(0, count).join(' ');
-    
-    document.getElementById('dictationResult').innerHTML = `
-        <div class="task-display" style="line-height: 2;">${text}</div>
-        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-            <button class="btn btn-outline" onclick="generateDictation()">🔄 Другой диктант</button>
-            <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('${text}'); this.textContent='Скопировано!'">📋 Скопировать</button>
-        </div>
-    `;
-}
-
-function renderEssayGenerator() {
-    document.getElementById('russianResult').innerHTML = `
-        <div class="generator-box" style="border-style:solid; text-align:left;">
-            <h3>📝 Конструктор сочинений</h3>
-            <div style="margin-bottom: 1rem;">
-                <label>Количество аргументов: <span id="argCountLabel">3</span></label>
-                <input type="range" id="essaySize" min="1" max="5" value="3" step="1" style="width: 100%;">
-            </div>
+            <h3>${isEssay ? '📝 Сочинение' : '✍️ Диктант'}</h3>
+            <p>Введите тему для генерации.</p>
             <div class="controls" style="justify-content: flex-start;">
-                <input type="text" id="essayTheme" placeholder="Тема (любовь, дружба, природа, подвиг, нравственный выбор, патриотизм, мечта)">
-                <button class="btn" onclick="generateEssay()">Сгенерировать</button>
+                <input type="text" id="themeInput" placeholder="Например: ${isEssay ? 'Роль книги в жизни человека' : 'Осень в лесу'}">
+                ${!isEssay ? `
+                <select id="dictLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
+                    <option value="5-7 класс">5-7 класс</option>
+                    <option value="8-9 класс" selected>8-9 класс</option>
+                    <option value="10-11 класс">10-11 класс</option>
+                </select>` : ''}
+                <button class="btn" id="genBtn" onclick="generateAIText('${type}')">Сгенерировать</button>
             </div>
-            <div id="essayResult" style="margin-top: 1.5rem;"></div>
+            <div id="resultBox" style="margin-top: 1.5rem;"></div>
         </div>
     `;
-    document.getElementById('essaySize').addEventListener('input', (e) => {
-        currentArgCount = parseInt(e.target.value);
-        document.getElementById('argCountLabel').textContent = e.target.value;
-    });
 }
 
-function generateEssay() {
-    const query = document.getElementById('essayTheme').value.toLowerCase().trim();
-    let themeKey = null;
-    if (query.includes('любов')) themeKey = 'любовь';
-    else if (query.includes('друж')) themeKey = 'дружба';
-    else if (query.includes('природ')) themeKey = 'природа';
-    else if (query.includes('подвиг')) themeKey = 'подвиг';
-    else if (query.includes('нравствен')) themeKey = 'нравственный выбор';
-    else if (query.includes('патриот')) themeKey = 'патриотизм';
-    else if (query.includes('мечт')) themeKey = 'мечта';
-    
-    if (!themeKey) {
-        document.getElementById('essayResult').innerHTML = `<div class="task-display" style="color: #ef4444;">Тема не найдена. Попробуйте: любовь, дружба, природа, подвиг, нравственный выбор, патриотизм, мечта.</div>`;
+// ==========================================
+// МАТЕМАТИКА, ФИЗИКА, ИНФОРМАТИКА
+// ==========================================
+function renderSubjectMenu(subject) {
+    const config = {
+        algebra: { title: 'Алгебра', icon: '📐', types: ['Уравнения', 'Упростить выражение', 'Функции', 'Задачи на проценты', 'Прогрессии'] },
+        geometry: { title: 'Геометрия', icon: '📏', types: ['Треугольники', 'Окружность', 'Площади фигур', 'Векторы', 'Стереометрия'] },
+        physics: { title: 'Физика', icon: '⚛️', types: ['Кинематика', 'Динамика', 'Закон Ома', 'Мощность', 'Плотность', 'Тепловые явления'] },
+        informatics: { title: 'Информатика', icon: '💻', types: ['Системы счисления', 'Логика', 'Алгоритмы', 'Объём информации'] }
+    };
+
+    const sub = config[subject];
+    let buttonsHtml = sub.types.map(t => `<button class="btn btn-outline" onclick="document.getElementById('themeInput').value='${t}'">${t}</button>`).join('');
+
+    contentArea.innerHTML = `
+        <div class="generator-box">
+            <h3>${sub.icon} ${sub.title}</h3>
+            <p>Введите любую тему. ИИ придумает задачу и решит её.</p>
+            <div class="controls" style="margin-bottom: 1rem;">${buttonsHtml}</div>
+            <div class="controls" style="justify-content: center; margin-top: 1.5rem;">
+                <input type="text" id="themeInput" placeholder="Своя тема...">
+                <select id="taskComplexity" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
+                    <option value="лёгкая">Лёгкая</option>
+                    <option value="средняя" selected>Средняя</option>
+                    <option value="сложная">Сложная</option>
+                </select>
+                <button class="btn" id="genBtn" onclick="generateAIText('${subject}')">Сгенерировать</button>
+            </div>
+            <div id="resultBox" style="margin-top: 1.5rem;"></div>
+        </div>
+    `;
+}
+
+// ==========================================
+// ГЕНЕРАТОР ИИ
+// ==========================================
+async function generateAIText(type) {
+    const themeInput = document.getElementById('themeInput').value.trim();
+    const resultBox = document.getElementById('resultBox');
+    const btn = document.getElementById('genBtn');
+
+    if (!themeInput) {
+        alert('Пожалуйста, введите тему!');
         return;
     }
 
-    const data = russianEngine.essayThemes[themeKey];
-    const intro = data.intros[Math.floor(Math.random() * data.intros.length)];
-    const conclusion = data.conclusions[Math.floor(Math.random() * data.conclusions.length)];
+    if (PROXY_URL.includes("ВАША_ССЫЛКА")) {
+        resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Вы не настроили Cloudflare Worker. Вставьте ссылку в app.js.</div>`;
+        return;
+    }
+
+    btn.textContent = 'ИИ думает...';
+    btn.disabled = true;
+    resultBox.innerHTML = `<div class="task-display">Генерация по теме: "${themeInput}"...</div>`;
+
+    let prompt = "";
+    if (type === 'essay') {
+        prompt = `Напиши школьное сочинение-рассуждение на тему: "${themeInput}". Структура: вступление, 2-3 аргумента из литературы, заключение. Объем не менее 250 слов. Пиши на русском языке.`;
+    } else if (type === 'dictation') {
+        const level = document.getElementById('dictLevel').value;
+        prompt = `Напиши текст для диктанта на тему: "${themeInput}". Уровень сложности: ${level}. Объем 120-150 слов. Соблюдай правила орфографии и пунктуации для этого класса. Просто текст, без заголовков.`;
+    } else {
+        const comp = document.getElementById('taskComplexity').value;
+        const subjectNames = { algebra: 'алгебры', geometry: 'геометрии', physics: 'физики', informatics: 'информатики' };
+        prompt = `Ты учитель ${subjectNames[type]}. Придумай задачу по теме "${themeInput}". Сложность: ${comp}. Сначала напиши текст задачи, затем напиши "РЕШЕНИЕ:" и распиши полное пошаговое решение с формулами и объяснениями. Пиши на русском языке.`;
+    }
+
+    try {
+        const res = await fetch(PROXY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: prompt })
+        });
+
+        const data = await res.json();
+        
+        if (data.text) {
+            let displayHtml = data.text.replace(/\n/g, '<br>');
+            if (type !== 'essay' && type !== 'dictation') {
+                displayHtml = displayHtml.replace(/РЕШЕНИЕ:/gi, '<br><br><strong style="color:var(--primary); font-size:1.2rem;">Решение:</strong><br>');
+            }
+
+            resultBox.innerHTML = `
+                <div class="task-display" style="line-height: 1.8; font-size: 1.05rem;">${displayHtml}</div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn btn-outline" onclick="generateAIText('${type}')">🔄 Другой вариант</button>
+                    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#resultBox .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
+                </div>
+            `;
+        } else {
+            resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка ИИ. Попробуйте еще раз.</div>`;
+        }
+    } catch (error) {
+        resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка сети. Проверьте прокси.</div>`;
+    } finally {
+        btn.textContent = 'Сгенерировать';
+        btn.disabled = false;
+    }
+}
+
+// ==========================================
+// ЧАТ ИИ
+// ==========================================
+async function askAI() {
+    const input = document.getElementById('aiInput').value.trim();
+    if (!input) return;
+
+    const btn = document.getElementById('aiBtn');
+    const responseBox = document.getElementById('aiResponse');
     
-    let fullText = `<h2>${data.title}</h2><br><strong>Вступление:</strong><br>${intro}<br><br>`;
-    for (let i = 0; i < currentArgCount; i++) {
-        const template = data.args[Math.floor(Math.random() * data.args.length)];
-        const argText = template
-            .replace('{author}', authors[Math.floor(Math.random() * authors.length)])
-            .replace('{title}', titles[Math.floor(Math.random() * titles.length)])
-            .replace('{hero}', heroes[Math.floor(Math.random() * heroes.length)])
-            .replace('{heroine}', heroines[Math.floor(Math.random() * heroines.length)]);
-        fullText += `<strong>Аргумент ${i + 1}:</strong><br>${argText}<br><br>`;
+    btn.textContent = 'Думает...';
+    btn.disabled = true;
+    responseBox.style.display = 'block';
+    responseBox.textContent = 'Нейросеть обрабатывает запрос...';
+
+    if (PROXY_URL.includes("ВАША_ССЫЛКА")) {
+        responseBox.textContent = 'Ошибка: Ссылка на Cloudflare Worker не вставлена в app.js.';
+        btn.textContent = 'Спросить';
+        btn.disabled = false;
+        return;
     }
-    fullText += `<strong>Заключение:</strong><br>${conclusion}`;
 
-    document.getElementById('essayResult').innerHTML = `
-        <div class="task-display" style="line-height: 1.8;">${fullText}</div>
-        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-            <button class="btn btn-outline" onclick="generateEssay()">🔄 Другой вариант</button>
-            <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#essayResult .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
-        </div>
-    `;
-}
+    try {
+        const fullPrompt = `Ты — умный помощник учителя. Отвечай кратко, по делу, на русском языке. Вопрос: ${input}`;
 
-// --- МАТЕМАТИКА И ДРУГИЕ ---
-function renderTaskGenerator(subjectKey) {
-    const subject = taskGenerators[subjectKey];
-    let html = `
-        <div class="generator-box">
-            <h3>${subject.icon} Генератор: ${subject.title}</h3>
-            <p>Выберите тип задачи.</p>
-            <div class="controls">
-    `;
-    for (const [key, gen] of Object.entries(subject.generators)) {
-        html += `<button class="btn btn-outline" onclick="generateTask('${subjectKey}', '${key}')">${gen.name}</button>`;
+        const res = await fetch(PROXY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: fullPrompt })
+        });
+
+        const data = await res.json();
+        
+        if (data.text) {
+            responseBox.textContent = data.text;
+        } else {
+            responseBox.textContent = 'Ошибка: ИИ не смог ответить.';
+        }
+    } catch (error) {
+        responseBox.textContent = 'Ошибка сети. Проверьте подключение к интернету.';
+    } finally {
+        btn.textContent = 'Спросить';
+        btn.disabled = false;
     }
-    html += `</div></div><div id="taskResult"></div>`;
-    contentArea.innerHTML = html;
 }
 
-function generateTask(subjectKey, genKey) {
-    const generator = taskGenerators[subjectKey].generators[genKey];
-    const task = generator.generate();
-    document.getElementById('taskResult').innerHTML = `
-        <div class="generator-box" style="border-style:solid; text-align:left; margin-top: 1rem;">
-            <h3>🎯 ${generator.name}</h3>
-            <div class="task-display">${task.text.replace(/\n/g, '<br>')}</div>
-            <div style="margin-top:1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button class="btn" onclick="document.getElementById('answerBox').style.display='block'">Показать решение</button>
-                <button class="btn btn-outline" onclick="generateTask('${subjectKey}', '${genKey}')">🔄 Другая задача</button>
-                <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#taskResult .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
-            </div>
-            <div id="answerBox" class="answer-display">${task.answer.replace(/\n/g, '<br>')}</div>
-        </div>
-    `;
-}
-
-// Поиск
+// ==========================================
+// ГЛОБАЛЬНЫЙ ПОИСК
+// ==========================================
 searchBtn.addEventListener('click', () => {
     const q = searchInput.value.toLowerCase().trim();
     if (!q) return;
 
-    if (q.includes('друж') || q.includes('любов') || q.includes('природ') || q.includes('подвиг') || q.includes('нравствен') || q.includes('патриот') || q.includes('мечт')) {
+    if (currentSubject === 'ai') {
+        contentArea.style.display = 'block';
+        aiArea.style.display = 'none';
+        document.querySelector('[data-subject="russian"]').click(); 
+    }
+
+    if (q.includes('сочин') || q.includes('друж') || q.includes('любов')) {
         document.querySelector('[data-subject="russian"]').click();
-        setTimeout(() => renderEssayGenerator(), 100);
-        setTimeout(() => { document.getElementById('essayTheme').value = q; generateEssay(); }, 200);
+        setTimeout(() => { renderRussianGenerator('essay'); document.getElementById('themeInput').value = q; }, 100);
     } else if (q.includes('диктант')) {
         document.querySelector('[data-subject="russian"]').click();
-        setTimeout(() => renderDictation(), 100);
-    } else if (q.includes('уравнен')) {
-        document.querySelector('[data-subject="algebra"]').click();
-        setTimeout(() => generateTask('algebra', 'quadratic'), 100);
-    } else if (q.includes('упростит')) {
-        document.querySelector('[data-subject="algebra"]').click();
-        setTimeout(() => generateTask('algebra', 'simplify'), 100);
-    } else if (q.includes('функци')) {
-        document.querySelector('[data-subject="algebra"]').click();
-        setTimeout(() => generateTask('algebra', 'function_value'), 100);
-    } else if (q.includes('прогресс')) {
-        document.querySelector('[data-subject="algebra"]').click();
-        setTimeout(() => generateTask('algebra', 'progression'), 100);
-    } else if (q.includes('систем')) {
-        document.querySelector('[data-subject="algebra"]').click();
-        setTimeout(() => generateTask('algebra', 'system'), 100);
-    } else if (q.includes('процент')) {
-        document.querySelector('[data-subject="algebra"]').click();
-        setTimeout(() => generateTask('algebra', 'percent'), 100);
-    } else if (q.includes('пифагор')) {
+        setTimeout(() => { renderRussianGenerator('dictation'); document.getElementById('themeInput').value = q.replace('диктант', '').trim(); }, 100);
+    } else if (q.includes('треугольник') || q.includes('окружност') || q.includes('площад') || q.includes('геометри')) {
         document.querySelector('[data-subject="geometry"]').click();
-        setTimeout(() => generateTask('geometry', 'pythagoras'), 100);
-    } else if (q.includes('окружност')) {
-        document.querySelector('[data-subject="geometry"]').click();
-        setTimeout(() => generateTask('geometry', 'circle'), 100);
-    } else if (q.includes('площад')) {
-        document.querySelector('[data-subject="geometry"]').click();
-        setTimeout(() => generateTask('geometry', 'area_triangle'), 100);
-    } else if (q.includes('объём')) {
-        document.querySelector('[data-subject="geometry"]').click();
-        setTimeout(() => generateTask('geometry', 'volume_cube'), 100);
-    } else if (q.includes('тригонометр')) {
-        document.querySelector('[data-subject="geometry"]').click();
-        setTimeout(() => generateTask('geometry', 'trigonometry'), 100);
-    } else if (q.includes('ом') || q.includes('ток')) {
+        setTimeout(() => { document.getElementById('themeInput').value = q; }, 100);
+    } else if (q.includes('скорост') || q.includes('ток') || q.includes('сила') || q.includes('физик')) {
         document.querySelector('[data-subject="physics"]').click();
-        setTimeout(() => generateTask('physics', 'ohm'), 100);
-    } else if (q.includes('мощност')) {
-        document.querySelector('[data-subject="physics"]').click();
-        setTimeout(() => generateTask('physics', 'power'), 100);
-    } else if (q.includes('плотност')) {
-        document.querySelector('[data-subject="physics"]').click();
-        setTimeout(() => generateTask('physics', 'density'), 100);
-    } else if (q.includes('теплот')) {
-        document.querySelector('[data-subject="physics"]').click();
-        setTimeout(() => generateTask('physics', 'heat'), 100);
-    } else if (q.includes('двоичн') || q.includes('систем счисл')) {
+        setTimeout(() => { document.getElementById('themeInput').value = q; }, 100);
+    } else if (q.includes('уравнен') || q.includes('функци') || q.includes('процент') || q.includes('алгебр')) {
+        document.querySelector('[data-subject="algebra"]').click();
+        setTimeout(() => { document.getElementById('themeInput').value = q; }, 100);
+    } else if (q.includes('двоичн') || q.includes('систем') || q.includes('логик') || q.includes('информатик')) {
         document.querySelector('[data-subject="informatics"]').click();
-        setTimeout(() => generateTask('informatics', 'binary'), 100);
-    } else if (q.includes('логик')) {
-        document.querySelector('[data-subject="informatics"]').click();
-        setTimeout(() => generateTask('informatics', 'logic'), 100);
+        setTimeout(() => { document.getElementById('themeInput').value = q; }, 100);
     } else {
-        alert('Попробуйте: Дружба, Любовь, Природа, Подвиг, Диктант, Уравнение, Упростить, Функция, Прогрессия, Система, Процент, Пифагор, Окружность, Площадь, Объём, Тригонометрия, Закон Ома, Мощность, Плотность, Теплота, Двоичная, Логика.');
+        document.querySelector('[data-subject="ai"]').click();
+        setTimeout(() => { document.getElementById('aiInput').value = q; askAI(); }, 100);
     }
 });
 
+// Инициализация
 renderSubject('russian');
