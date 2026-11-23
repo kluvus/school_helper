@@ -5,23 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>МБОУ СОШ №1 — Умный помощник</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Подключаем визуальную клавиатуру формул MathLive -->
-    <script defer src="https://unpkg.com"></script>
     <style>
-        /* Оформление поля формул под стиль вашего сайта */
-        math-field {
-            flex: 1;
-            min-width: 200px;
-            font-size: 1.15rem;
-            padding: 0.65rem 0.8rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-solid, #ccc);
-            background: var(--bg-color, #fff);
-            color: var(--text-color, #000);
-            outline: none;
+        .simple-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
         }
-        math-field:focus-within {
+        .sym-btn {
+            padding: 0.45rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: 1px solid var(--border-solid, #ccc);
+            background: var(--bg-color, #f8fafc);
+            color: var(--text-color, #1e293b);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .sym-btn:hover {
             border-color: var(--primary, #2563eb);
+            color: var(--primary, #2563eb);
+        }
+        .sym-btn:active {
+            transform: scale(0.95);
+        }
+        .simple-frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 3px;
+            font-size: 0.9em;
+            line-height: 1.1;
+        }
+        .simple-frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 3px 1px;
+        }
+        .simple-frac > span:last-child {
+            padding: 1px 3px 0;
         }
     </style>
 </head>
@@ -62,13 +85,26 @@
             <div id="aiArea" class="content-area" style="display: none; margin-top: 2rem;">
                 <div class="generator-box" style="border-style: solid; text-align: left;">
                     <h3>🤖 Свободный чат с ИИ</h3>
-                    <p style="margin-bottom: 1rem;">Задайте любой вопрос по учебе (можно вводить формулы).</p>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                        <math-field id="aiInput" placeholder="Например: Реши уравнение или объясни дроби..."></math-field>
-                        <button type="button" onclick="toggleMathKeyboard('aiInput')" class="btn btn-outline" title="Открыть клавиатуру знаков">🔢 Знаки</button>
+                    <p style="margin-bottom: 0.8rem;">Задайте любой вопрос по учебе.</p>
+                    
+                    <div class="simple-toolbar">
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '/')" title="Дробь">a/b</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '√()')" title="Корень">√</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '²')" title="В квадрате">x²</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '³')" title="В кубе">x³</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', ' × ')" title="Умножить">×</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', ' ÷ ')" title="Разделить">÷</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '±')" title="Плюс-минус">±</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', 'π')" title="Число Пи">π</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '∠')" title="Угол">∠</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '°')" title="Градус">°</button>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <input type="text" id="aiInput" placeholder="Например: Как сложить 1/2 и 3/4?" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); outline: none;">
                         <button onclick="askAI()" class="btn" id="aiBtn">Спросить</button>
                     </div>
-                    <div id="aiResponse" style="padding: 1rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.6;"></div>
+                    <div id="aiResponse" style="padding: 1rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.8;"></div>
                 </div>
             </div>
         </div>
