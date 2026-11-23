@@ -18,7 +18,7 @@ function insertSymbol(inputId, symbol) {
     const text = input.value;
     input.value = text.substring(0, start) + symbol + text.substring(end);
     input.focus();
-    const cursorPos = symbol === '√()' ? start + 2 : start + symbol.length;
+    const cursorPos = symbol.endsWith('()') ? start + symbol.length - 1 : start + symbol.length;
     input.setSelectionRange(cursorPos, cursorPos);
 }
 
@@ -101,16 +101,16 @@ function renderSubjectMenu(subject) {
             defaultGrade: 8,
             types: ['Уравнения', 'Упростить выражение', 'Функции', 'Задачи на проценты', 'Прогрессии', 'Дроби'],
             symbols: [
-                { label: 'a/b', val: '/' },
-                { label: '√', val: '√()' },
-                { label: 'x²', val: '²' },
-                { label: 'x³', val: '³' },
-                { label: '×', val: '×' },
-                { label: '÷', val: '÷' },
-                { label: '±', val: '±' },
-                { label: '≤', val: '≤' },
-                { label: '≥', val: '≥' },
-                { label: '≠', val: '≠' }
+                { label: 'a/b', val: '/', title: 'Дробь' },
+                { label: '√', val: '√()', title: 'Корень' },
+                { label: 'x²', val: '²', title: 'В квадрате' },
+                { label: 'x³', val: '³', title: 'В кубе' },
+                { label: '×', val: ' × ', title: 'Умножить' },
+                { label: '÷', val: ' ÷ ', title: 'Разделить' },
+                { label: '±', val: '±', title: 'Плюс-минус' },
+                { label: '≠', val: '≠', title: 'Не равно' },
+                { label: '≤', val: '≤', title: 'Меньше или равно' },
+                { label: '≥', val: '≥', title: 'Больше или равно' }
             ]
         },
         geometry: {
@@ -120,15 +120,15 @@ function renderSubjectMenu(subject) {
             defaultGrade: 8,
             types: ['Треугольники', 'Окружность', 'Площади фигур', 'Векторы', 'Стереометрия'],
             symbols: [
-                { label: '∠', val: '∠' },
-                { label: '°', val: '°' },
-                { label: '△', val: '△' },
-                { label: '⊥', val: '⊥' },
-                { label: '∥', val: '∥' },
-                { label: 'π', val: 'π' },
-                { label: '√', val: '√()' },
-                { label: '²', val: '²' },
-                { label: 'a/b', val: '/' }
+                { label: '∠', val: '∠', title: 'Угол' },
+                { label: '°', val: '°', title: 'Градус' },
+                { label: '△', val: '△', title: 'Треугольник' },
+                { label: '⊥', val: '⊥', title: 'Перпендикулярно' },
+                { label: '∥', val: '∥', title: 'Параллельно' },
+                { label: 'π', val: 'π', title: 'Число Пи' },
+                { label: '√', val: '√()', title: 'Корень' },
+                { label: 'x²', val: '²', title: 'В квадрате' },
+                { label: 'a/b', val: '/', title: 'Дробь' }
             ]
         },
         physics: {
@@ -138,15 +138,15 @@ function renderSubjectMenu(subject) {
             defaultGrade: 8,
             types: ['Кинематика', 'Динамика', 'Закон Ома', 'Мощность', 'Плотность', 'Тепловые явления'],
             symbols: [
-                { label: 'a/b', val: '/' },
-                { label: '×', val: '×' },
-                { label: '²', val: '²' },
-                { label: '³', val: '³' },
-                { label: 'Δ', val: 'Δ' },
-                { label: 'Ω', val: 'Ω' },
-                { label: 'ρ', val: 'ρ' },
-                { label: 'υ', val: 'υ' },
-                { label: '°C', val: '°C' }
+                { label: 'a/b', val: '/', title: 'Дробь' },
+                { label: '×', val: ' × ', title: 'Умножить' },
+                { label: '÷', val: ' ÷ ', title: 'Разделить' },
+                { label: 'x²', val: '²', title: 'В квадрате' },
+                { label: '√', val: '√()', title: 'Корень' },
+                { label: 'Δ', val: 'Δ', title: 'Дельта (изменение)' },
+                { label: 'ρ', val: 'ρ', title: 'Плотность (ро)' },
+                { label: 'Ω', val: 'Ω', title: 'Ом' },
+                { label: '°C', val: '°C', title: 'Градусы Цельсия' }
             ]
         },
         informatics: {
@@ -156,40 +156,43 @@ function renderSubjectMenu(subject) {
             defaultGrade: 8,
             types: ['Системы счисления', 'Логика', 'Алгоритмы', 'Объём информации'],
             symbols: [
-                { label: '∧', val: '∧' },
-                { label: '∨', val: '∨' },
-                { label: '¬', val: '¬' },
-                { label: '→', val: '→' },
-                { label: '≡', val: '≡' },
-                { label: '2ⁿ', val: '2^' },
-                { label: '≤', val: '≤' },
-                { label: '≥', val: '≥' },
-                { label: '≠', val: '≠' }
+                { label: '∧', val: ' ∧ ', title: 'Логическое И' },
+                { label: '∨', val: ' ∨ ', title: 'Логическое ИЛИ' },
+                { label: '¬', val: '¬', title: 'Логическое НЕ' },
+                { label: '→', val: ' → ', title: 'Следование' },
+                { label: '≡', val: ' ≡ ', title: 'Тождественность' },
+                { label: '2ⁿ', val: '2^', title: 'Степень двойки' },
+                { label: '≤', val: '≤', title: 'Меньше или равно' },
+                { label: '≥', val: '≥', title: 'Больше или равно' },
+                { label: '≠', val: '≠', title: 'Не равно' }
             ]
         }
     };
 
     const sub = config[subject];
     let buttonsHtml = sub.types.map(t => `<button class="btn btn-outline" onclick="document.getElementById('themeInput').value='${t}'">${t}</button>`).join('');
-    let symbolsHtml = sub.symbols.map(s => `<button type="button" class="sym-btn" onclick="insertSymbol('themeInput', '${s.val}')">${s.label}</button>`).join('');
+    let symbolsHtml = sub.symbols.map(s => `<button type="button" class="sym-btn" onclick="insertSymbol('themeInput', '${s.val}')" title="${s.title}">${s.label}</button>`).join('');
 
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>${sub.icon} ${sub.title}</h3>
             <p>Выберите класс и тему. ИИ составит задачу по школьной программе и распишет решение.</p>
             <div class="controls" style="margin-bottom: 1rem;">${buttonsHtml}</div>
-            <div class="symbol-bar" style="margin-top: 1.2rem;">${symbolsHtml}</div>
-            <div class="controls" style="justify-content: center; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.6rem;">
-                <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
-                    ${getGradeOptions(sub.minGrade, 11, sub.defaultGrade)}
-                </select>
-                <input type="text" id="themeInput" placeholder="Своя тема или пример...">
-                <select id="taskComplexity" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
-                    <option value="лёгкая">Лёгкая</option>
-                    <option value="средняя" selected>Средняя</option>
-                    <option value="сложная">Сложная</option>
-                </select>
-                <button class="btn" id="genBtn" onclick="generateAIText('${subject}')">Сгенерировать</button>
+            
+            <div style="margin-top: 1.5rem;">
+                <div class="symbol-toolbar">${symbolsHtml}</div>
+                <div class="controls" style="justify-content: center; flex-wrap: wrap; gap: 0.6rem;">
+                    <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
+                        ${getGradeOptions(sub.minGrade, 11, sub.defaultGrade)}
+                    </select>
+                    <input type="text" id="themeInput" placeholder="Своя тема или пример...">
+                    <select id="taskComplexity" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
+                        <option value="лёгкая">Лёгкая</option>
+                        <option value="средняя" selected>Средняя</option>
+                        <option value="сложная">Сложная</option>
+                    </select>
+                    <button class="btn" id="genBtn" onclick="generateAIText('${subject}')">Сгенерировать</button>
+                </div>
             </div>
             <div id="resultBox" style="margin-top: 1.5rem;"></div>
         </div>
@@ -203,8 +206,22 @@ function formatMathText(text) {
         .replace(/\^2/g, '²')
         .replace(/\^3/g, '³');
 
-    formatted = formatted.replace(/([a-zA-Zа-яА-Я0-9]+)\s*\/\s*([a-zA-Zа-яА-Я0-9]+)/g, '<span class="frac"><span class="frac-num">$1</span><span class="frac-den">$2</span></span>');
+    formatted = formatted.replace(/(\d+|[a-zA-Zа-яА-Я])\s*\/\s*(\d+|[a-zA-Zа-яА-Я])/g, '$$\frac{$1}{$2}$$');
     return formatted;
+}
+
+function renderMathInContainer(element) {
+    if (typeof renderMathInElement === 'function') {
+        renderMathInElement(element, {
+            delimiters: [
+                { left: '$$', right: '$$', display: false },
+                { left: '$', right: '$', display: false },
+                { left: '\(', right: '\)', display: false },
+                { left: '\[', right: '\]', display: true }
+            ],
+            throwOnError: false
+        });
+    }
 }
 
 async function generateAIText(type) {
@@ -230,7 +247,7 @@ async function generateAIText(type) {
     btn.disabled = true;
     resultBox.innerHTML = `<div class="task-display">Генерация (${grade}) по теме: "${themeInput}"...</div>`;
 
-    const mathRule = `ВАЖНО: Пиши математические выражения простым школьным языком. Обыкновенные дроби пиши через слэш без пробелов (например: 3/4 или 1/2), чтобы сайт красиво оформил их в два этажа. Вместо звездочки (*) используй знак умножения (×). Степени пиши символами (², ³). Не используй LaTeX и знаки доллара ($). Строго соблюдай программу ФГОС для ${grade}.`;
+    const mathRule = `ВАЖНО: Пиши математические выражения простым школьным языком. Обыкновенные и алгебраические дроби записывай через слэш (например: 3/4 или x/2), чтобы они красиво отобразились в два этажа. Вместо звездочки (*) используй знак умножения (×). Степени пиши символами (², ³), корни знаком √. Не используй сложные LaTeX-теги вроде \begin или \text. Строго соблюдай программу ФГОС для ${grade}.`;
 
     let prompt = "";
     
@@ -263,12 +280,16 @@ async function generateAIText(type) {
             }
 
             resultBox.innerHTML = `
-                <div class="task-display" style="line-height: 2; font-size: 1.05rem;">${displayHtml}</div>
+                <div class="task-display" id="renderedTask" style="line-height: 2; font-size: 1.05rem;">${displayHtml}</div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <button class="btn btn-outline" onclick="generateAIText('${type}')">🔄 Другой вариант</button>
                     <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#resultBox .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
                 </div>
             `;
+            
+            if (type !== 'essay' && type !== 'dictation') {
+                renderMathInContainer(document.getElementById('renderedTask'));
+            }
         } else {
             resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка ИИ. Попробуйте еще раз.</div>`;
         }
@@ -300,7 +321,7 @@ async function askAI() {
     responseBox.textContent = 'Нейросеть обрабатывает запрос...';
 
     try {
-        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай кратко, грамотно и по делу на русском языке. Дроби пиши через слэш без пробелов (например 3/4), не используй знаки доллара ($) и сложные коды. Вопрос: ${input}`;
+        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай просто, понятно и по делу на русском языке. Дроби пиши через слэш (например: 3/4), умножение знаком ×, степени символами ², ³. Не используй сложные LaTeX-коды. Вопрос: ${input}`;
 
         const res = await fetch(PROXY_URL, {
             method: 'POST',
@@ -311,8 +332,10 @@ async function askAI() {
         const data = await res.json();
         
         if (data.text) {
-            responseBox.innerHTML = formatMathText(data.text).replace(/
+            const formatted = formatMathText(data.text).replace(/
 /g, '<br>');
+            responseBox.innerHTML = formatted;
+            renderMathInContainer(responseBox);
         } else {
             responseBox.textContent = 'Ошибка: ИИ не смог ответить.';
         }
