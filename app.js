@@ -22,12 +22,14 @@ function insertSym(inputId, sym) {
     const el = document.getElementById(inputId);
     if (!el) return;
     const toInsert = sym === 'a/b' ? ' / ' : sym;
-    const start = el.selectionStart || el.value.length;
-    const end = el.selectionEnd || el.value.length;
+    const start = typeof el.selectionStart === 'number' ? el.selectionStart : el.value.length;
+    const end = typeof el.selectionEnd === 'number' ? el.selectionEnd : el.value.length;
     el.value = el.value.substring(0, start) + toInsert + el.value.substring(end);
     el.focus();
     const pos = start + toInsert.length;
-    el.setSelectionRange(pos, pos);
+    if (el.setSelectionRange) {
+        el.setSelectionRange(pos, pos);
+    }
 }
 
 function buildSymbolBar(inputId, subject) {
@@ -36,7 +38,9 @@ function buildSymbolBar(inputId, subject) {
 }
 
 const aiSymBox = document.getElementById('aiSymbols');
-if (aiSymBox) aiSymBox.innerHTML = buildSymbolBar('aiInput', 'ai');
+if (aiSymBox) {
+    aiSymBox.innerHTML = buildSymbolBar('aiInput', 'ai');
+}
 
 themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -118,14 +122,15 @@ function renderSubjectMenu(subject) {
 
     const sub = config[subject];
     let buttonsHtml = sub.types.map(t => `<button class="btn btn-outline" onclick="document.getElementById('themeInput').value='${t}'">${t}</button>`).join('');
+    let symBarHtml = buildSymbolBar('themeInput', subject);
 
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>${sub.icon} ${sub.title}</h3>
             <p>Выберите класс и тему. ИИ составит задачу по школьной программе и распишет решение.</p>
             <div class="controls" style="margin-bottom: 1rem;">${buttonsHtml}</div>
-            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;">
-                ${buildSymbolBar('themeInput', subject)}
+            <div style="display: flex; justify-content: center; gap: 0.35rem; flex-wrap: wrap; margin-top: 1rem;">
+                ${symBarHtml}
             </div>
             <div class="controls" style="justify-content: center; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem;">
                 <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
@@ -145,21 +150,24 @@ function renderSubjectMenu(subject) {
 }
 
 function formatMathText(text) {
-    return text
+    let cleaned = text
         .replace(/\*\*/g, '')
         .replace(/\*/g, ' × ')
-        .replace(/(\d+)\s*\/\s*(\d+)/g, '\\(\\frac{$1}{$2}\\)')
         .replace(/\^2/g, '²')
         .replace(/\^3/g, '³');
+    
+    cleaned = cleaned.replace(/(\d+)\s*\/\s*(\d+)/g, function(match, num, den) {
+        return `\\(\\frac{${num}}{${den}}\\)`;
+    });
+    return cleaned;
 }
 
-function applyKatex(el) {
-    if (el && typeof renderMathInElement === 'function') {
-        renderMathInElement(el, {
+function renderKatexInElement(el) {
+    if (window.renderMathInElement && el) {
+        window.renderMathInElement(el, {
             delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
+                { left: '$$', right: '$$', display: true },
+                { left: '\\(', right: '\\)', display: false }
             ],
             throwOnError: false
         });
@@ -189,7 +197,7 @@ async function generateAIText(type) {
     btn.disabled = true;
     resultBox.innerHTML = `<div class="task-display">Генерация (${grade}) по теме: "${themeInput}"...</div>`;
 
-    const mathRule = `ВАЖНО: Пиши математические выражения просто и понятно для школьника. Вместо звездочки (*) используй знак умножения (×). Обыкновенные дроби записывай через слэш (например 3/4 или (x+1)/2) — сайт сам превратит их в красивые двухэтажные дроби. Степени пиши символами (², ³). Строго соблюдай программу ФГОС для ${grade} и не используй формулы из более старших классов.`;
+    const mathRule = `ВАЖНО: Пиши математические выражения красиво. Вместо звездочки (*) используй знак умножения (×). Обыкновенные дроби пиши через слэш (например: 3/4 или 1/2). Степени пиши символами (², ³) или словами. Строго соблюдай программу ФГОС для ${grade} и не используй формулы или термины из более старших классов.`;
 
     let prompt = "";
     
@@ -221,13 +229,13 @@ async function generateAIText(type) {
             }
 
             resultBox.innerHTML = `
-                <div class="task-display" style="line-height: 1.8; font-size: 1.05rem;">${displayHtml}</div>
+                <div class="task-display" id="taskOutput" style="line-height: 1.8; font-size: 1.05rem;">${displayHtml}</div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <button class="btn btn-outline" onclick="generateAIText('${type}')">🔄 Другой вариант</button>
                     <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#resultBox .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
                 </div>
             `;
-            applyKatex(resultBox);
+            renderKatexInElement(document.getElementById('taskOutput'));
         } else {
             resultBox.innerHTML = `<div class="task-display" style="color: #ef4444;">Ошибка ИИ. Попробуйте еще раз.</div>`;
         }
@@ -259,7 +267,7 @@ async function askAI() {
     responseBox.textContent = 'Нейросеть обрабатывает запрос...';
 
     try {
-        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай кратко, грамотно и по делу на русском языке. Дроби записывай через слэш (например 3/4), умножение знаком ×. Вопрос: ${input}`;
+        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай кратко, грамотно и по делу на русском языке. Обыкновенные дроби пиши через слэш (например: 3/4 или 1/2). Вопрос: ${input}`;
 
         const res = await fetch(PROXY_URL, {
             method: 'POST',
@@ -270,8 +278,9 @@ async function askAI() {
         const data = await res.json();
         
         if (data.text) {
-            responseBox.innerHTML = formatMathText(data.text).replace(/\n/g, '<br>');
-            applyKatex(responseBox);
+            const formatted = formatMathText(data.text).replace(/\n/g, '<br>');
+            responseBox.innerHTML = formatted;
+            renderKatexInElement(responseBox);
         } else {
             responseBox.textContent = 'Ошибка: ИИ не смог ответить.';
         }
