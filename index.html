@@ -8,34 +8,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <style>
-        .symbol-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 0.75rem;
-            justify-content: center;
-        }
-        .sym-btn {
-            padding: 0.45rem 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border: 1px solid var(--border-solid, #cbd5e1);
-            border-radius: 8px;
-            background: var(--bg-color, #f8fafc);
-            color: var(--text-color, #1e293b);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .sym-btn:hover {
-            border-color: var(--primary, #2563eb);
-            background: var(--primary, #2563eb);
-            color: #ffffff;
-        }
-        .katex {
-            font-size: 1.15em;
-        }
-    </style>
 </head>
 <body>
     <header class="main-header">
@@ -74,25 +46,13 @@
             <div id="aiArea" class="content-area" style="display: none; margin-top: 2rem;">
                 <div class="generator-box" style="border-style: solid; text-align: left;">
                     <h3>🤖 Свободный чат с ИИ</h3>
-                    <p style="margin-bottom: 0.8rem;">Задайте любой вопрос по учебе. Нажмите на знак, чтобы вставить его в вопрос:</p>
-                    <div class="symbol-toolbar" style="justify-content: flex-start;">
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '/')" title="Дробь">a/b</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '√()')" title="Корень">√</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '²')" title="Квадрат">x²</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '³')" title="Куб">x³</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', ' × ')" title="Умножить">×</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', ' ÷ ')" title="Разделить">÷</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '±')" title="Плюс-минус">±</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', 'π')" title="Число Пи">π</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '∠')" title="Угол">∠</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '°')" title="Градус">°</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '△')" title="Треугольник">△</button>
-                    </div>
+                    <p style="margin-bottom: 1rem;">Задайте любой вопрос по учебе.</p>
+                    <div id="aiSymbols" style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.6rem;"></div>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                        <input type="text" id="aiInput" placeholder="Например: Реши 3/4 + 1/2 или объясни дроби" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); outline: none;">
+                        <input type="text" id="aiInput" placeholder="Например: Как объяснить ребенку дроби?" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); outline: none;">
                         <button onclick="askAI()" class="btn" id="aiBtn">Спросить</button>
                     </div>
-                    <div id="aiResponse" style="padding: 1rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.8;"></div>
+                    <div id="aiResponse" style="padding: 1rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.6;"></div>
                 </div>
             </div>
         </div>
