@@ -10,6 +10,18 @@ const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/"
 let currentSubject = 'russian';
 let lastRequestTime = 0;
 
+function toggleMathKeyboard(fieldId) {
+    const mf = document.getElementById(fieldId);
+    if (mf && window.mathVirtualKeyboard) {
+        mf.focus();
+        if (window.mathVirtualKeyboard.visible) {
+            window.mathVirtualKeyboard.hide();
+        } else {
+            window.mathVirtualKeyboard.show();
+        }
+    }
+}
+
 themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
@@ -100,7 +112,8 @@ function renderSubjectMenu(subject) {
                 <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
                     ${getGradeOptions(sub.minGrade, 11, sub.defaultGrade)}
                 </select>
-                <input type="text" id="themeInput" placeholder="Своя тема...">
+                <math-field id="themeInput" placeholder="Своя тема или формула..."></math-field>
+                <button type="button" class="btn btn-outline" onclick="toggleMathKeyboard('themeInput')" title="Клавиатура формул">🔢 Знаки</button>
                 <select id="taskComplexity" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
                     <option value="лёгкая">Лёгкая</option>
                     <option value="средняя" selected>Средняя</option>
@@ -123,7 +136,8 @@ function formatMathText(text) {
 }
 
 async function generateAIText(type) {
-    const themeInput = document.getElementById('themeInput').value.trim();
+    const themeEl = document.getElementById('themeInput');
+    const themeInput = themeEl ? themeEl.value.trim() : '';
     const gradeEl = document.getElementById('gradeLevel');
     const grade = gradeEl ? gradeEl.value : '8 класс';
     const resultBox = document.getElementById('resultBox');
@@ -140,6 +154,8 @@ async function generateAIText(type) {
         return;
     }
     lastRequestTime = now;
+
+    if (window.mathVirtualKeyboard) window.mathVirtualKeyboard.hide();
 
     btn.textContent = 'ИИ думает...';
     btn.disabled = true;
@@ -195,7 +211,8 @@ async function generateAIText(type) {
 }
 
 async function askAI() {
-    const input = document.getElementById('aiInput').value.trim();
+    const inputEl = document.getElementById('aiInput');
+    const input = inputEl ? inputEl.value.trim() : '';
     if (!input) return;
 
     const now = Date.now();
@@ -204,6 +221,8 @@ async function askAI() {
         return;
     }
     lastRequestTime = now;
+
+    if (window.mathVirtualKeyboard) window.mathVirtualKeyboard.hide();
 
     const btn = document.getElementById('aiBtn');
     const responseBox = document.getElementById('aiResponse');
