@@ -6,45 +6,44 @@
     <title>МБОУ СОШ №1 — Умный помощник</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .simple-toolbar {
+        .symbol-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 0.6rem;
+            gap: 6px;
+            margin-bottom: 10px;
+            justify-content: center;
         }
         .sym-btn {
-            padding: 0.45rem 0.75rem;
-            font-size: 1rem;
+            padding: 6px 12px;
+            font-size: 1.05rem;
             font-weight: 600;
-            border-radius: 6px;
-            border: 1px solid var(--border-solid, #ccc);
+            border: 1px solid var(--border-solid, #cbd5e1);
+            border-radius: 8px;
             background: var(--bg-color, #f8fafc);
             color: var(--text-color, #1e293b);
             cursor: pointer;
             transition: all 0.15s ease;
         }
-        .sym-btn:hover {
-            border-color: var(--primary, #2563eb);
-            color: var(--primary, #2563eb);
-        }
         .sym-btn:active {
             transform: scale(0.95);
+            background: var(--primary, #2563eb);
+            color: #fff;
         }
-        .simple-frac {
+        .frac {
             display: inline-flex;
             flex-direction: column;
-            align-items: center;
             vertical-align: middle;
+            text-align: center;
             margin: 0 3px;
             font-size: 0.9em;
             line-height: 1.1;
         }
-        .simple-frac > span:first-child {
+        .frac-num {
             border-bottom: 1.5px solid currentColor;
-            padding: 0 3px 1px;
+            padding: 0 3px 1px 3px;
         }
-        .simple-frac > span:last-child {
-            padding: 1px 3px 0;
+        .frac-den {
+            padding: 1px 3px 0 3px;
         }
     </style>
 </head>
@@ -81,27 +80,24 @@
             
             <div id="contentArea" class="content-area"></div>
 
-            <!-- Блок свободного чата с ИИ -->
             <div id="aiArea" class="content-area" style="display: none; margin-top: 2rem;">
                 <div class="generator-box" style="border-style: solid; text-align: left;">
                     <h3>🤖 Свободный чат с ИИ</h3>
                     <p style="margin-bottom: 0.8rem;">Задайте любой вопрос по учебе.</p>
-                    
-                    <div class="simple-toolbar">
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '/')" title="Дробь">a/b</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '√()')" title="Корень">√</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '²')" title="В квадрате">x²</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '³')" title="В кубе">x³</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', ' × ')" title="Умножить">×</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', ' ÷ ')" title="Разделить">÷</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '±')" title="Плюс-минус">±</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', 'π')" title="Число Пи">π</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '∠')" title="Угол">∠</button>
-                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '°')" title="Градус">°</button>
+                    <div class="symbol-bar" style="justify-content: flex-start;">
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '/')">a/b</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '√()')">√</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '²')">x²</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '³')">x³</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '×')">×</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '÷')">÷</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '±')">±</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', 'π')">π</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '∠')">∠</button>
+                        <button type="button" class="sym-btn" onclick="insertSymbol('aiInput', '°')">°</button>
                     </div>
-
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                        <input type="text" id="aiInput" placeholder="Например: Как сложить 1/2 и 3/4?" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); outline: none;">
+                        <input type="text" id="aiInput" placeholder="Например: Как объяснить ребенку дроби?" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); outline: none;">
                         <button onclick="askAI()" class="btn" id="aiBtn">Спросить</button>
                     </div>
                     <div id="aiResponse" style="padding: 1rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.8;"></div>

@@ -15,10 +15,11 @@ function insertSymbol(inputId, symbol) {
     if (!input) return;
     const start = input.selectionStart || input.value.length;
     const end = input.selectionEnd || input.value.length;
-    input.value = input.value.substring(0, start) + symbol + input.value.substring(end);
+    const text = input.value;
+    input.value = text.substring(0, start) + symbol + text.substring(end);
     input.focus();
-    const cursorOffset = symbol.endsWith('()') ? symbol.length - 1 : symbol.length;
-    input.setSelectionRange(start + cursorOffset, start + cursorOffset);
+    const cursorPos = symbol === '√()' ? start + 2 : start + symbol.length;
+    input.setSelectionRange(cursorPos, cursorPos);
 }
 
 themeToggle.addEventListener('click', () => {
@@ -94,62 +95,95 @@ function renderRussianGenerator(type) {
 function renderSubjectMenu(subject) {
     const config = {
         algebra: {
-            title: 'Алгебра (Математика)', icon: '📐', minGrade: 1, defaultGrade: 8,
+            title: 'Алгебра (Математика)',
+            icon: '📐',
+            minGrade: 1,
+            defaultGrade: 8,
             types: ['Уравнения', 'Упростить выражение', 'Функции', 'Задачи на проценты', 'Прогрессии', 'Дроби'],
             symbols: [
-                { label: 'a/b', val: '/' }, { label: '√', val: '√()' }, { label: 'x²', val: '²' },
-                { label: 'x³', val: '³' }, { label: '×', val: ' × ' }, { label: '÷', val: ' ÷ ' },
-                { label: '±', val: '±' }, { label: '≤', val: ' ≤ ' }, { label: '≥', val: ' ≥ ' }
+                { label: 'a/b', val: '/' },
+                { label: '√', val: '√()' },
+                { label: 'x²', val: '²' },
+                { label: 'x³', val: '³' },
+                { label: '×', val: '×' },
+                { label: '÷', val: '÷' },
+                { label: '±', val: '±' },
+                { label: '≤', val: '≤' },
+                { label: '≥', val: '≥' },
+                { label: '≠', val: '≠' }
             ]
         },
         geometry: {
-            title: 'Геометрия', icon: '📏', minGrade: 1, defaultGrade: 8,
+            title: 'Геометрия',
+            icon: '📏',
+            minGrade: 1,
+            defaultGrade: 8,
             types: ['Треугольники', 'Окружность', 'Площади фигур', 'Векторы', 'Стереометрия'],
             symbols: [
-                { label: '∠', val: '∠' }, { label: '°', val: '°' }, { label: '△', val: '△' },
-                { label: '⊥', val: ' ⊥ ' }, { label: '∥', val: ' ∥ ' }, { label: 'π', val: 'π' },
-                { label: '√', val: '√()' }, { label: '²', val: '²' }, { label: 'a/b', val: '/' }
+                { label: '∠', val: '∠' },
+                { label: '°', val: '°' },
+                { label: '△', val: '△' },
+                { label: '⊥', val: '⊥' },
+                { label: '∥', val: '∥' },
+                { label: 'π', val: 'π' },
+                { label: '√', val: '√()' },
+                { label: '²', val: '²' },
+                { label: 'a/b', val: '/' }
             ]
         },
         physics: {
-            title: 'Физика', icon: '⚛️', minGrade: 7, defaultGrade: 8,
+            title: 'Физика',
+            icon: '⚛️',
+            minGrade: 7,
+            defaultGrade: 8,
             types: ['Кинематика', 'Динамика', 'Закон Ома', 'Мощность', 'Плотность', 'Тепловые явления'],
             symbols: [
-                { label: 'a/b', val: '/' }, { label: '×', val: ' × ' }, { label: '²', val: '²' },
-                { label: '³', val: '³' }, { label: 'Δ', val: 'Δ' }, { label: 'ρ', val: 'ρ' },
-                { label: 'Ω', val: 'Ом' }, { label: '°C', val: '°C' }, { label: '√', val: '√()' }
+                { label: 'a/b', val: '/' },
+                { label: '×', val: '×' },
+                { label: '²', val: '²' },
+                { label: '³', val: '³' },
+                { label: 'Δ', val: 'Δ' },
+                { label: 'Ω', val: 'Ω' },
+                { label: 'ρ', val: 'ρ' },
+                { label: 'υ', val: 'υ' },
+                { label: '°C', val: '°C' }
             ]
         },
         informatics: {
-            title: 'Информатика', icon: '💻', minGrade: 1, defaultGrade: 8,
+            title: 'Информатика',
+            icon: '💻',
+            minGrade: 1,
+            defaultGrade: 8,
             types: ['Системы счисления', 'Логика', 'Алгоритмы', 'Объём информации'],
             symbols: [
-                { label: '∧ (И)', val: ' ∧ ' }, { label: '∨ (ИЛИ)', val: ' ∨ ' }, { label: '¬ (НЕ)', val: '¬' },
-                { label: '→', val: ' → ' }, { label: '≡', val: ' ≡ ' }, { label: '2ⁿ', val: '2^' },
-                { label: '≤', val: ' ≤ ' }, { label: '≥', val: ' ≥ ' }
+                { label: '∧', val: '∧' },
+                { label: '∨', val: '∨' },
+                { label: '¬', val: '¬' },
+                { label: '→', val: '→' },
+                { label: '≡', val: '≡' },
+                { label: '2ⁿ', val: '2^' },
+                { label: '≤', val: '≤' },
+                { label: '≥', val: '≥' },
+                { label: '≠', val: '≠' }
             ]
         }
     };
 
     const sub = config[subject];
     let buttonsHtml = sub.types.map(t => `<button class="btn btn-outline" onclick="document.getElementById('themeInput').value='${t}'">${t}</button>`).join('');
-    let symHtml = sub.symbols.map(s => `<button type="button" class="sym-btn" onclick="insertSymbol('themeInput', '${s.val}')">${s.label}</button>`).join('');
+    let symbolsHtml = sub.symbols.map(s => `<button type="button" class="sym-btn" onclick="insertSymbol('themeInput', '${s.val}')">${s.label}</button>`).join('');
 
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>${sub.icon} ${sub.title}</h3>
             <p>Выберите класс и тему. ИИ составит задачу по школьной программе и распишет решение.</p>
             <div class="controls" style="margin-bottom: 1rem;">${buttonsHtml}</div>
-            
-            <div class="simple-toolbar" style="justify-content: center; margin-top: 1.2rem;">
-                ${symHtml}
-            </div>
-
+            <div class="symbol-bar" style="margin-top: 1.2rem;">${symbolsHtml}</div>
             <div class="controls" style="justify-content: center; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.6rem;">
                 <select id="gradeLevel" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
                     ${getGradeOptions(sub.minGrade, 11, sub.defaultGrade)}
                 </select>
-                <input type="text" id="themeInput" placeholder="Своя тема (например: 1/2 + 3/4)...">
+                <input type="text" id="themeInput" placeholder="Своя тема или пример...">
                 <select id="taskComplexity" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid);">
                     <option value="лёгкая">Лёгкая</option>
                     <option value="средняя" selected>Средняя</option>
@@ -162,21 +196,15 @@ function renderSubjectMenu(subject) {
     `;
 }
 
-function formatSimpleMath(text) {
-    let html = text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+function formatMathText(text) {
+    let formatted = text
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, ' × ')
+        .replace(/\^2/g, '²')
+        .replace(/\^3/g, '³');
 
-    html = html.replace(/\*\*/g, '');
-    html = html.replace(/\*/g, ' × ');
-    html = html.replace(/\^2/g, '²').replace(/\^3/g, '³');
-
-    // Превращаем простые дроби (например 3/4, x/2, 1/y) в аккуратные двухэтажные дроби
-    html = html.replace(/([a-zA-Zа-яА-Я0-9]+)\s*\/\s*([a-zA-Zа-яА-Я0-9]+)/g,
-        '<span class="simple-frac"><span>$1</span><span>$2</span></span>');
-
-    return html;
+    formatted = formatted.replace(/([a-zA-Zа-яА-Я0-9]+)\s*\/\s*([a-zA-Zа-яА-Я0-9]+)/g, '<span class="frac"><span class="frac-num">$1</span><span class="frac-den">$2</span></span>');
+    return formatted;
 }
 
 async function generateAIText(type) {
@@ -202,7 +230,7 @@ async function generateAIText(type) {
     btn.disabled = true;
     resultBox.innerHTML = `<div class="task-display">Генерация (${grade}) по теме: "${themeInput}"...</div>`;
 
-    const mathRule = `ВАЖНО: Пиши простым понятным школьным языком без сложных кодов LaTeX и знаков $. Обычные дроби пиши через слэш (например: 3/4 или 1/2), умножение знаком ×, степени символами (², ³), корень знаком √. Строго соблюдай программу ФГОС для ${grade}.`;
+    const mathRule = `ВАЖНО: Пиши математические выражения простым школьным языком. Обыкновенные дроби пиши через слэш без пробелов (например: 3/4 или 1/2), чтобы сайт красиво оформил их в два этажа. Вместо звездочки (*) используй знак умножения (×). Степени пиши символами (², ³). Не используй LaTeX и знаки доллара ($). Строго соблюдай программу ФГОС для ${grade}.`;
 
     let prompt = "";
     
@@ -226,7 +254,7 @@ async function generateAIText(type) {
         const data = await res.json();
         
         if (data.text) {
-            let cleanText = (type !== 'essay' && type !== 'dictation') ? formatSimpleMath(data.text) : data.text;
+            let cleanText = (type !== 'essay' && type !== 'dictation') ? formatMathText(data.text) : data.text;
             let displayHtml = cleanText.replace(/
 /g, '<br>');
 
@@ -272,7 +300,7 @@ async function askAI() {
     responseBox.textContent = 'Нейросеть обрабатывает запрос...';
 
     try {
-        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай кратко, грамотно и простым школьным языком на русском языке. Не используй сложные коды LaTeX и знаки $. Обычные дроби пиши через слэш (например: 3/4), умножение знаком ×, степени символами (², ³), корень знаком √. Вопрос: ${input}`;
+        const fullPrompt = `Ты — умный помощник школьного учителя. Отвечай кратко, грамотно и по делу на русском языке. Дроби пиши через слэш без пробелов (например 3/4), не используй знаки доллара ($) и сложные коды. Вопрос: ${input}`;
 
         const res = await fetch(PROXY_URL, {
             method: 'POST',
@@ -283,7 +311,7 @@ async function askAI() {
         const data = await res.json();
         
         if (data.text) {
-            responseBox.innerHTML = formatSimpleMath(data.text).replace(/
+            responseBox.innerHTML = formatMathText(data.text).replace(/
 /g, '<br>');
         } else {
             responseBox.textContent = 'Ошибка: ИИ не смог ответить.';
