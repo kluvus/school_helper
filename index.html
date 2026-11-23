@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>МБОУ СОШ №1 — Умный помощник</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Подключаем визуальную клавиатуру формул MathLive -->
+    <script defer src="https://unpkg.com"></script>
+    <style>
+        /* Оформление поля формул под стиль вашего сайта */
+        math-field {
+            flex: 1;
+            min-width: 200px;
+            font-size: 1.15rem;
+            padding: 0.65rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-solid, #ccc);
+            background: var(--bg-color, #fff);
+            color: var(--text-color, #000);
+            outline: none;
+        }
+        math-field:focus-within {
+            border-color: var(--primary, #2563eb);
+        }
+    </style>
 </head>
 <body>
     <header class="main-header">
@@ -43,9 +62,10 @@
             <div id="aiArea" class="content-area" style="display: none; margin-top: 2rem;">
                 <div class="generator-box" style="border-style: solid; text-align: left;">
                     <h3>🤖 Свободный чат с ИИ</h3>
-                    <p style="margin-bottom: 1rem;">Задайте любой вопрос по учебе.</p>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                        <input type="text" id="aiInput" placeholder="Например: Как объяснить ребенку дроби?" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); outline: none;">
+                    <p style="margin-bottom: 1rem;">Задайте любой вопрос по учебе (можно вводить формулы).</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <math-field id="aiInput" placeholder="Например: Реши уравнение или объясни дроби..."></math-field>
+                        <button type="button" onclick="toggleMathKeyboard('aiInput')" class="btn btn-outline" title="Открыть клавиатуру знаков">🔢 Знаки</button>
                         <button onclick="askAI()" class="btn" id="aiBtn">Спросить</button>
                     </div>
                     <div id="aiResponse" style="padding: 1rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.6;"></div>
