@@ -1,4 +1,4 @@
-window.PROXY_URL = "mbou-school-1-helper.vaceslavkorotkih76.workers.dev";
+window.PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/";
 
 window.SYMBOL_SETS = {
     algebra: ['a/b', '√', 'x²', 'x³', '×', '÷', '±', '≠', '≤', '≥', 'π'],
