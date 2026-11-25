@@ -199,7 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.renderMathInElement) window.renderMathInElement(box, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
             return keepRaw ? data.text : true;
         } catch (e) {
-            box.innerHTML = `<div class="task-display" style="color:#ef4444;">Ошибка сети или ИИ. Попробуйте снова.</div>`;
+            box.innerHTML = `<div class="task-display" style="color:#ef4444;">Ошибка: ${esc(e.message)}</div>`;
+
             return null;
         } finally {
             if (btn) { btn.disabled = false; btn.textContent = origText; }
