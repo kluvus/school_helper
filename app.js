@@ -1,10 +1,3 @@
-const contentArea = document.getElementById('contentArea');
-const aiArea = document.getElementById('aiArea');
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
-const navBtns = document.querySelectorAll('.nav-btn');
-const themeToggle = document.getElementById('themeToggle');
-
 const PROXY_URL = "https://mbou-school-1-helper.vaceslavkorotkih76.workers.dev/";
 
 let currentSubject = 'russian';
@@ -30,64 +23,118 @@ const SUBJECTS_CONFIG = {
         minGrade: 1,
         defaultGrade: 8,
         isRussian: true,
-        types: ['Правописание Н и НН', 'Причастный и деепричастный оборот', 'Знаки препинания в СПП', 'Чередующиеся гласные в корне', 'Слитное и раздельное написание НЕ']
+        types: [
+            'Правописание Н и НН',
+            'Причастный и деепричастный оборот',
+            'Знаки препинания в СПП',
+            'Чередующиеся гласные в корне',
+            'Слитное и раздельное написание НЕ'
+        ]
     },
     literature: {
         title: 'Литература',
         icon: '📚',
         minGrade: 5,
         defaultGrade: 9,
-        description: 'ИИ составит вопрос для анализа произведения, тему сочинения или литературную викторину с разбором по ФГОС.',
-        types: ['Анализ лирического стихотворения', 'Образ «лишнего человека»', 'Тема маленького человека', 'Средства художественной выразительности', 'Конфликт отцов и детей']
+        description: 'ИИ составит вопрос для анализа произведения, тему сочинения или литературную викторину с разбором по школьной программе.',
+        types: [
+            'Анализ лирического стихотворения',
+            'Образ лишнего человека в литературе',
+            'Тема маленького человека',
+            'Средства художественной выразительности',
+            'Конфликт отцов и детей'
+        ]
     },
     algebra: {
         title: 'Алгебра (Математика)',
         icon: '📐',
         minGrade: 1,
         defaultGrade: 8,
-        types: ['Квадратные уравнения', 'Упростить выражение', 'Линейная и квадратичная функции', 'Задачи на проценты и сплавы', 'Арифметическая и геометрическая прогрессии']
+        types: [
+            'Квадратные уравнения',
+            'Упростить выражение',
+            'Линейная и квадратичная функции',
+            'Задачи на проценты и сплавы',
+            'Арифметическая и геометрическая прогрессии'
+        ]
     },
     geometry: {
         title: 'Геометрия',
         icon: '📏',
         minGrade: 7,
         defaultGrade: 8,
-        types: ['Признаки равенства и подобия треугольников', 'Теорема Пифагора', 'Вписанные и центральные углы', 'Площади многоугольников', 'Векторы и метод координат']
+        types: [
+            'Признаки равенства и подобия треугольников',
+            'Теорема Пифагора',
+            'Вписанные и центральные углы',
+            'Площади многоугольников',
+            'Векторы и метод координат'
+        ]
     },
     probability: {
         title: 'Вероятность и статистика',
         icon: '🎲',
         minGrade: 7,
         defaultGrade: 8,
-        types: ['Классическое определение вероятности', 'Среднее арифметическое, медиана и размах', 'Дерево вероятностей и графы', 'Комбинаторика: перестановки и сочетания', 'Случайные события и испытания Бернулли']
+        types: [
+            'Классическое определение вероятности',
+            'Среднее арифметическое, медиана и размах',
+            'Дерево вероятностей и графы',
+            'Комбинаторика: перестановки и сочетания',
+            'Случайные события и испытания Бернулли'
+        ]
     },
     physics: {
         title: 'Физика',
         icon: '⚛️',
         minGrade: 7,
         defaultGrade: 8,
-        types: ['Равномерное и равноускоренное движение', 'Законы Ньютона и силы в механике', 'Закон Ома для участка цепи', 'Работа, мощность и КПД', 'Количество теплоты и тепловой баланс']
+        types: [
+            'Равномерное и равноускоренное движение',
+            'Законы Ньютона и силы в механике',
+            'Закон Ома для участка цепи',
+            'Работа, мощность и КПД',
+            'Количество теплоты и тепловой баланс'
+        ]
     },
     chemistry: {
         title: 'Химия',
         icon: '🧪',
         minGrade: 8,
         defaultGrade: 8,
-        types: ['Окислительно-восстановительные реакции', 'Расчёты по химическим уравнениям (моль, масса)', 'Классы неорганических соединений', 'Электролитическая диссоциация и ионные уравнения', 'Строение атома и периодический закон']
+        types: [
+            'Окислительно-восстановительные реакции',
+            'Расчёты по химическим уравнениям (моль, масса)',
+            'Классы неорганических соединений',
+            'Электролитическая диссоциация и ионные уравнения',
+            'Строение атома и периодический закон'
+        ]
     },
     biology: {
         title: 'Биология',
         icon: '🧬',
         minGrade: 5,
         defaultGrade: 8,
-        types: ['Строение и функции клетки', 'Фотосинтез и обмен веществ', 'Анатомия человека: кровеносная и нервная системы', 'Законы Менделя и основы генетики', 'Эволюция и экосистемы']
+        types: [
+            'Строение и функции клетки',
+            'Фотосинтез и обмен веществ',
+            'Анатомия человека: кровеносная и нервная системы',
+            'Законы Менделя и основы генетики',
+            'Эволюция и экосистемы'
+        ]
     },
     geography: {
         title: 'География',
         icon: '🌍',
         minGrade: 5,
         defaultGrade: 8,
-        types: ['Определение географических координат', 'Климатические пояса и погода', 'Рельеф и тектоническое строение России', 'Природные зоны и ресурсы', 'Население и хозяйство регионов']
+        types: [
+            'Определение географических координат',
+            'Климатические пояса и погода',
+            'Рельеф и тектоническое строение России',
+            'Природные зоны и ресурсы',
+            'Население и хозяйство регионов'
+        ]
     },
     history: {
         title: 'История',
@@ -95,15 +142,27 @@ const SUBJECTS_CONFIG = {
         minGrade: 5,
         defaultGrade: 8,
         description: 'ИИ сгенерирует задание на работу с датами, историческими личностями, причинно-следственными связями или документами.',
-        types: ['Древняя Русь и князья', 'Реформы Петра I', 'Отечественная война 1812 года', 'Великая Отечественная война (1941–1945)', 'Культура и быт России XIX века']
+        types: [
+            'Древняя Русь и первые князья',
+            'Реформы Петра I',
+            'Отечественная война 1812 года',
+            'Великая Отечественная война (1941–1945)',
+            'Культура и быт России XIX века'
+        ]
     },
     social: {
         title: 'Обществознание',
         icon: '⚖️',
         minGrade: 6,
         defaultGrade: 9,
-        description: 'ИИ составит проблемную задачу, тест или разбор правовой/экономической ситуации по программе ФГОС.',
-        types: ['Конституция РФ и права человека', 'Спрос, предложение и рыночная экономика', 'Правонарушения и юридическая ответственность', 'Социальные нормы и отклоняющееся поведение', 'Политические режимы и формы государства']
+        description: 'ИИ составит проблемную задачу, тест или разбор правовой и экономической ситуации по школьной программе.',
+        types: [
+            'Конституция РФ и права человека',
+            'Спрос, предложение и рыночная экономика',
+            'Правонарушения и юридическая ответственность',
+            'Социальные нормы и отклоняющееся поведение',
+            'Политические режимы и формы государства'
+        ]
     },
     english: {
         title: 'Английский язык',
@@ -111,19 +170,36 @@ const SUBJECTS_CONFIG = {
         minGrade: 2,
         defaultGrade: 8,
         description: 'ИИ создаст тренировочные упражнения на грамматику, лексику или перевод с подробным разбором правил.',
-        types: ['Present Simple vs Present Continuous', 'Past Simple vs Present Perfect', 'Conditionals (Условные предложения)', 'Passive Voice (Страдательный залог)', 'Modal Verbs (Модальные глаголы)']
+        types: [
+            'Present Simple vs Present Continuous',
+            'Past Simple vs Present Perfect',
+            'Conditionals (Условные предложения)',
+            'Passive Voice (Страдательный залог)',
+            'Modal Verbs (Модальные глаголы)'
+        ]
     },
     informatics: {
         title: 'Информатика',
         icon: '💻',
         minGrade: 5,
         defaultGrade: 8,
-        types: ['Системы счисления и перевод чисел', 'Алгебра логики и таблицы истинности', 'Кодирование и объём информации', 'Алгоритмы и исполнители', 'Основы программирования на Python']
+        types: [
+            'Системы счисления и перевод чисел',
+            'Алгебра логики и таблицы истинности',
+            'Кодирование и объём информации',
+            'Алгоритмы и исполнители',
+            'Основы программирования на Python'
+        ]
     }
 };
 
-function escapeAttr(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function insertSym(inputId, sym) {
@@ -142,50 +218,8 @@ function insertSym(inputId, sym) {
 
 function buildSymbolBar(inputId, subject) {
     const syms = SYMBOL_SETS[subject] || SYMBOL_SETS.ai;
-    return syms.map(s => `<button type="button" class="btn btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.9rem; min-width: 36px;" onclick="insertSym('${inputId}', '${escapeAttr(s)}')">${s}</button>`).join('');
+    return syms.map(s => `<button type="button" class="btn btn-outline sym-btn" data-target="${escapeHtml(inputId)}" data-sym="${escapeHtml(s)}" style="padding: 0.35rem 0.65rem; font-size: 0.9rem; min-width: 36px;">${escapeHtml(s)}</button>`).join('');
 }
-
-const aiSymBox = document.getElementById('aiSymbols');
-if (aiSymBox) {
-    aiSymBox.innerHTML = buildSymbolBar('aiInput', 'ai');
-}
-
-const aiInputEl = document.getElementById('aiInput');
-if (aiInputEl) {
-    aiInputEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            askAI();
-        }
-    });
-}
-
-themeToggle.addEventListener('click', () => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    themeToggle.textContent = isDark ? '🌙' : '☀️';
-});
-
-navBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        navBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSubject = btn.dataset.subject;
-        
-        if (currentSubject === 'ai') {
-            contentArea.style.display = 'none';
-            aiArea.style.display = 'block';
-        } else if (currentSubject === 'homework') {
-            contentArea.style.display = 'block';
-            aiArea.style.display = 'none';
-            renderHomeworkHelper();
-        } else {
-            contentArea.style.display = 'block';
-            aiArea.style.display = 'none';
-            renderSubject(currentSubject);
-        }
-    });
-});
 
 function getGradeOptions(minGrade = 1, maxGrade = 11, defaultGrade = 8) {
     let options = '';
@@ -197,18 +231,12 @@ function getGradeOptions(minGrade = 1, maxGrade = 11, defaultGrade = 8) {
 
 function getAllSubjectOptions(selectedKey = 'algebra') {
     return Object.entries(SUBJECTS_CONFIG)
-        .map(([key, val]) => `<option value="${key}" ${key === selectedKey ? 'selected' : ''}>${val.icon} ${val.title}</option>`)
+        .map(([key, val]) => `<option value="${escapeHtml(key)}" ${key === selectedKey ? 'selected' : ''}>${val.icon} ${escapeHtml(val.title)}</option>`)
         .join('');
 }
 
-function selectTopicChip(btn, topicText) {
-    document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected-chip'));
-    btn.classList.add('selected-chip');
-    const input = document.getElementById('themeInput');
-    if (input) {
-        input.value = topicText;
-        input.focus();
-    }
+function buildTopicButtons(types) {
+    return types.map(t => `<button type="button" class="btn btn-outline topic-chip" data-topic="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('');
 }
 
 function renderSubject(subject) {
@@ -220,15 +248,18 @@ function renderSubject(subject) {
 }
 
 function renderRussianMenu() {
+    const contentArea = document.getElementById('contentArea');
+    if (!contentArea) return;
+
     contentArea.innerHTML = `
         <div class="generator-box">
             <h3>📖 Русский язык</h3>
             <p>Для учителей и учеников: выберите формат работы, популярную тему или впишите свою.</p>
             <div class="controls">
-                <button class="btn" onclick="renderRussianGenerator('essay')">📝 Сочинение на любую тему</button>
-                <button class="btn btn-outline" onclick="renderRussianGenerator('dictation')">✍️ Диктант на любую тему</button>
-                <button class="btn btn-outline" onclick="renderRussianGenerator('exercise')">🧩 Тренировочное задание</button>
-                <button class="btn btn-hw" onclick="openHomeworkForSubject('russian')">🎒 Помощь с ДЗ</button>
+                <button type="button" class="btn rus-mode-btn" data-mode="essay">📝 Сочинение</button>
+                <button type="button" class="btn btn-outline rus-mode-btn" data-mode="dictation">✍️ Диктант</button>
+                <button type="button" class="btn btn-outline rus-mode-btn" data-mode="exercise">🧩 Тренировочное задание</button>
+                <button type="button" class="btn btn-hw open-hw-btn" data-subj="russian">🎒 Помощь с ДЗ</button>
             </div>
         </div>
         <div id="russianResult"></div>
@@ -237,8 +268,19 @@ function renderRussianMenu() {
 }
 
 function renderRussianGenerator(type) {
+    const rusResult = document.getElementById('russianResult');
+    if (!rusResult) return;
+
+    document.querySelectorAll('.rus-mode-btn').forEach(btn => {
+        if (btn.dataset.mode === type) {
+            btn.classList.remove('btn-outline');
+        } else {
+            btn.classList.add('btn-outline');
+        }
+    });
+
     const sub = SUBJECTS_CONFIG.russian;
-    const topicsHtml = sub.types.map(t => `<button type="button" class="btn btn-outline topic-chip" onclick="selectTopicChip(this, '${escapeAttr(t)}')">${t}</button>`).join('');
+    const topicsHtml = buildTopicButtons(sub.types);
     
     const titles = {
         essay: '📝 Сочинение-рассуждение',
@@ -251,18 +293,18 @@ function renderRussianGenerator(type) {
         exercise: 'Например: Знаки препинания при причастном обороте'
     };
 
-    document.getElementById('russianResult').innerHTML = `
+    rusResult.innerHTML = `
         <div class="generator-box" style="border-style:solid; text-align:left;">
             <h3>${titles[type]}</h3>
-            <p>Укажите класс, выберите тему из популярных или введите любую свою тему по программе ФГОС.</p>
-            <div class="topics-label">Популярные темы:</div>
+            <p>Укажите класс, выберите тему из популярных или введите любую свою тему по школьной программе.</p>
+            <div class="topics-label" style="text-align:left;">Популярные темы:</div>
             <div class="controls" style="justify-content: flex-start; margin-bottom: 1rem;">${topicsHtml}</div>
             <div class="controls" style="justify-content: flex-start; flex-wrap: wrap; gap: 0.6rem;">
                 <select id="gradeLevel">
                     ${getGradeOptions(1, 11, 8)}
                 </select>
-                <input type="text" id="themeInput" placeholder="${placeholders[type]}">
-                <button class="btn" id="genBtn" onclick="generateAIText('${type}')">Сгенерировать</button>
+                <input type="text" id="themeInput" placeholder="${escapeHtml(placeholders[type])}">
+                <button type="button" class="btn" id="genBtn" data-gentype="${escapeHtml(type)}">Сгенерировать</button>
             </div>
             <div id="resultBox" style="margin-top: 1.5rem;"></div>
         </div>
@@ -270,16 +312,19 @@ function renderRussianGenerator(type) {
 }
 
 function renderSubjectMenu(subject) {
+    const contentArea = document.getElementById('contentArea');
+    if (!contentArea) return;
+
     const sub = SUBJECTS_CONFIG[subject];
-    const buttonsHtml = sub.types.map(t => `<button type="button" class="btn btn-outline topic-chip" onclick="selectTopicChip(this, '${escapeAttr(t)}')">${t}</button>`).join('');
+    const buttonsHtml = buildTopicButtons(sub.types);
     const hasSymbols = Boolean(SYMBOL_SETS[subject]);
     const symBarHtml = hasSymbols ? `<div style="display: flex; justify-content: center; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.8rem;">${buildSymbolBar('themeInput', subject)}</div>` : '';
     const desc = sub.description || 'Выберите класс и тему. ИИ составит задание по школьной программе и распишет подробное решение.';
 
     contentArea.innerHTML = `
         <div class="generator-box">
-            <h3>${sub.icon} ${sub.title}</h3>
-            <p>${desc}</p>
+            <h3>${sub.icon} ${escapeHtml(sub.title)}</h3>
+            <p>${escapeHtml(desc)}</p>
             <div class="topics-label">Популярные темы:</div>
             <div class="controls" style="margin-bottom: 1rem;">${buttonsHtml}</div>
             ${symBarHtml}
@@ -293,8 +338,8 @@ function renderSubjectMenu(subject) {
                     <option value="средняя" selected>Средняя</option>
                     <option value="сложная">Сложная</option>
                 </select>
-                <button class="btn" id="genBtn" onclick="generateAIText('${subject}')">Сгенерировать</button>
-                <button class="btn btn-hw" onclick="openHomeworkForSubject('${subject}')">🎒 Помощь с ДЗ</button>
+                <button type="button" class="btn" id="genBtn" data-gentype="${escapeHtml(subject)}">Сгенерировать</button>
+                <button type="button" class="btn btn-hw open-hw-btn" data-subj="${escapeHtml(subject)}">🎒 Помощь с ДЗ</button>
             </div>
             <div id="resultBox" style="margin-top: 1.5rem;"></div>
         </div>
@@ -302,30 +347,35 @@ function renderSubjectMenu(subject) {
 }
 
 function openHomeworkForSubject(subjectKey) {
-    navBtns.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     const hwBtn = document.querySelector('[data-subject="homework"]');
     if (hwBtn) hwBtn.classList.add('active');
     currentSubject = 'homework';
-    contentArea.style.display = 'block';
-    aiArea.style.display = 'none';
+    const contentArea = document.getElementById('contentArea');
+    const aiArea = document.getElementById('aiArea');
+    if (contentArea) contentArea.style.display = 'block';
+    if (aiArea) aiArea.style.display = 'none';
     renderHomeworkHelper(subjectKey);
 }
 
 function renderHomeworkHelper(preselectedSubject = 'algebra') {
+    const contentArea = document.getElementById('contentArea');
+    if (!contentArea) return;
+
     contentArea.innerHTML = `
         <div class="generator-box" style="text-align: left;">
             <h3>🎒 Умный помощник с домашним заданием</h3>
             <p style="margin-bottom: 1rem;">Вставь условие задачи, правило или текст упражнения. Нейросеть поможет разобраться в теме, покажет похожий пример и даст пошаговые подсказки, чтобы ты смог решить сам.</p>
             
             <div class="hw-notice">
-                <strong>💡 Принцип честной учёбы:</strong> Мы не даём готовых ответов для списывания. Вместо этого ты получишь:
-                1) краткую теорию и формулы/правила по твоему вопросу;
-                2) разбор <strong>аналогичного</strong> примера;
-                3) план решения и подсказку для первого шага (или проверку твоего черновика).
+                <strong>💡 Как это работает:</strong> Вместо сухого ответа для списывания ты получишь:
+                1) краткую теорию, формулы или правила по твоему вопросу;
+                2) полный разбор <strong>похожего</strong> примера;
+                3) пошаговый план и подсказку для самостоятельного решения (или проверку твоего черновика).
             </div>
 
             <div class="controls" style="justify-content: flex-start; margin-bottom: 0.8rem;">
-                <select id="hwSubject" onchange="updateHwSymbols()">
+                <select id="hwSubject">
                     ${getAllSubjectOptions(preselectedSubject)}
                 </select>
                 <select id="hwGrade">
@@ -342,23 +392,56 @@ function renderHomeworkHelper(preselectedSubject = 'algebra') {
                 ${buildSymbolBar('hwTaskInput', preselectedSubject)}
             </div>
 
-            <textarea id="hwTaskInput" class="hw-textarea" placeholder="Впишите сюда условие задачи, предложение для разбора, вопрос по теме или свой черновик решения..."></textarea>
+            <textarea id="hwTaskInput" class="hw-textarea" placeholder="Впиши сюда условие задачи, предложение для разбора или своё решение для проверки..."></textarea>
 
             <div class="controls" style="justify-content: flex-start;">
-                <button class="btn btn-hw" id="hwGenBtn" onclick="generateHomeworkHelp()">Помочь разобраться</button>
-                <button class="btn btn-outline" onclick="document.getElementById('hwTaskInput').value=''">Очистить</button>
+                <button type="button" class="btn btn-hw" id="hwGenBtn">Помочь разобраться</button>
+                <button type="button" class="btn btn-outline" id="hwClearBtn">Очистить</button>
             </div>
 
             <div id="hwResultBox" style="margin-top: 1.5rem;"></div>
         </div>
     `;
+
+    const hwSubjSelect = document.getElementById('hwSubject');
+    if (hwSubjSelect) {
+        hwSubjSelect.addEventListener('change', () => {
+            const bar = document.getElementById('hwSymbolsBar');
+            if (bar) {
+                bar.innerHTML = buildSymbolBar('hwTaskInput', hwSubjSelect.value);
+            }
+        });
+    }
 }
 
-function updateHwSymbols() {
-    const subj = document.getElementById('hwSubject').value;
-    const bar = document.getElementById('hwSymbolsBar');
-    if (bar) {
-        bar.innerHTML = buildSymbolBar('hwTaskInput', subj);
+function formatMathText(text, enableMath = true) {
+    let cleaned = String(text)
+        .replace(/\*\*/g, '')
+        .replace(/(\d|[a-zA-Zа-яА-ЯёЁ\)])\s*\*\s*(\d|[a-zA-Zа-яА-ЯёЁ\(])/g, '$1 × $2')
+        .replace(/\^2/g, '²')
+        .replace(/\^3/g, '³');
+
+    if (enableMath) {
+        cleaned = cleaned.replace(/(^|[^\d\/])(\d{1,3})\s*\/\s*(\d{1,3})(?!\d|\/)/g, function(match, prefix, num, den) {
+            return `${prefix}\\(\\frac{${num}}{${den}}\\)`;
+        });
+    }
+    return cleaned;
+}
+
+function renderKatexInElement(el) {
+    if (window.renderMathInElement && el) {
+        try {
+            window.renderMathInElement(el, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '\\(', right: '\\)', display: false }
+                ],
+                throwOnError: false
+            });
+        } catch (e) {
+            console.warn('KaTeX render warning:', e);
+        }
     }
 }
 
@@ -385,13 +468,13 @@ async function generateHomeworkHelp() {
 
     btn.textContent = 'Репетитор думает...';
     btn.disabled = true;
-    resultBox.innerHTML = `<div class="task-display">Анализирую задание по предмету «${subjTitle}» (${grade})...</div>`;
+    resultBox.innerHTML = `<div class="task-display">Анализирую задание по предмету «${escapeHtml(subjTitle)}» (${escapeHtml(grade)})...</div>`;
 
     let modeInstruction = '';
     if (mode === 'explain') {
         modeInstruction = `СТРОГОЕ ПРАВИЛО: НЕ ПИШИ готовый ответ и не решай до конца именно это задание ученика! Вместо этого:
 1. Объясни простым языком теорию, правила или формулы, которые нужны для этого задания (строго для ${grade}).
-2. Придумай и полностью разбери ПОХОЖИЙ аналогичный пример с другими числами/словами.
+2. Придумай и полностью разбери ПОХОЖИЙ аналогичный пример с другими числами или словами.
 3. Дай пошаговый план, как ученику самому выполнить его задание.`;
     } else if (mode === 'hint') {
         modeInstruction = `СТРОГОЕ ПРАВИЛО: НЕ решай задачу и НЕ пиши ответ! Дай ученику только понятную наводящую подсказку: с чего начать, какую формулу или правило вспомнить и какой первый шаг сделать.`;
@@ -416,17 +499,16 @@ ${taskText}`;
         const data = await res.json();
 
         if (data.text) {
-            const isMathSubj = MATH_SUBJECTS.includes(subjKey);
-            const cleanText = formatMathText(data.text, isMathSubj);
-            const displayHtml = cleanText.replace(/
-/g, '<br>');
+            const isMath = MATH_SUBJECTS.includes(subjKey);
+            const cleanText = formatMathText(data.text, isMath);
+            const displayHtml = cleanText.replace(/\n/g, '<br>');
             resultBox.innerHTML = `
                 <div class="task-display" id="hwOutput" style="line-height: 1.8;">${displayHtml}</div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#hwOutput').innerText); this.textContent='Скопировано!'">📋 Скопировать разбор</button>
+                    <button type="button" class="btn btn-secondary copy-btn" data-copy-target="hwOutput">📋 Скопировать разбор</button>
                 </div>
             `;
-            if (isMathSubj) {
+            if (isMath) {
                 renderKatexInElement(document.getElementById('hwOutput'));
             }
         } else {
@@ -440,35 +522,9 @@ ${taskText}`;
     }
 }
 
-function formatMathText(text, enableFractions = true) {
-    let cleaned = text
-        .replace(/\*\*/g, '')
-        .replace(/([0-9a-zA-Zа-яА-ЯёЁ\)])\s*\*\s*([0-9a-zA-Zа-яА-ЯёЁ\(])/g, '$1 × $2')
-        .replace(/\^2/g, '²')
-        .replace(/\^3/g, '³');
-    
-    if (enableFractions) {
-        cleaned = cleaned.replace(/(^|[\s(=+\-×÷])(\d{1,3})\s*\/\s*(\d{1,3})(?=[\s).,;!?=+\-×÷]|$)/g, function(match, prefix, num, den) {
-            return `${prefix}\(\frac{${num}}{${den}}\)`;
-        });
-    }
-    return cleaned;
-}
-
-function renderKatexInElement(el) {
-    if (window.renderMathInElement && el) {
-        window.renderMathInElement(el, {
-            delimiters: [
-                { left: '$$', right: '$$', display: true },
-                { left: '\(', right: '\)', display: false }
-            ],
-            throwOnError: false
-        });
-    }
-}
-
 async function generateAIText(type) {
-    const themeInput = document.getElementById('themeInput').value.trim();
+    const themeEl = document.getElementById('themeInput');
+    const themeInput = themeEl ? themeEl.value.trim() : '';
     const gradeEl = document.getElementById('gradeLevel');
     const grade = gradeEl ? gradeEl.value : '8 класс';
     const resultBox = document.getElementById('resultBox');
@@ -488,24 +544,24 @@ async function generateAIText(type) {
 
     btn.textContent = 'ИИ думает...';
     btn.disabled = true;
-    resultBox.innerHTML = `<div class="task-display">Генерация (${grade}) по теме: "${themeInput}"...</div>`;
+    resultBox.innerHTML = `<div class="task-display">Генерация (${escapeHtml(grade)}) по теме: "${escapeHtml(themeInput)}"...</div>`;
 
-    const mathRule = `ВАЖНО: Пиши математические и химические выражения аккуратно. Вместо звездочки (*) используй знак умножения (×). Обыкновенные дроби пиши через слэш (например: 3/4 или 1/2). Степени пиши символами (², ³). Строго соблюдай программу ФГОС для ${grade} и не используй материал из более старших классов.`;
+    const mathRule = `ВАЖНО: Пиши математические и химические выражения аккуратно. Вместо звездочки (*) используй знак умножения (×). Обыкновенные дроби пиши через слэш (например: 3/4 или 1/2). Степени пиши символами (², ³). Строго соблюдай школьную программу для ${grade} и не используй материал из более старших классов.`;
 
     let prompt = "";
     const isTextOnlyMode = (type === 'essay' || type === 'dictation');
-    const isMathSubj = MATH_SUBJECTS.includes(type);
 
     if (type === 'essay') {
-        prompt = `Ты опытный учитель русского языка и литературы. Напиши школьное сочинение-рассуждение для ученика (${grade}) на тему: "${themeInput}". Соблюдай требования ФГОС и уровень словарного запаса, подходящий строго для ${grade}. Структура: вступление, 2 аргумента, заключение. Пиши на русском языке.`;
+        prompt = `Ты опытный учитель русского языка и литературы. Напиши школьное сочинение-рассуждение для ученика (${grade}) на тему: "${themeInput}". Соблюдай требования школьной программы и уровень словарного запаса, подходящий строго для ${grade}. Структура: вступление, 2 аргумента, заключение. Пиши на русском языке.`;
     } else if (type === 'dictation') {
-        prompt = `Ты опытный учитель русского языка. Напиши связный текст для диктанта для ученика (${grade}) на тему: "${themeInput}". Соблюдай правила орфографии, пунктуации и объем слов строго по стандартам ФГОС для ${grade}. Выведи только сам текст диктанта, без заголовков и пояснений.`;
+        prompt = `Ты опытный учитель русского языка. Напиши связный текст для диктанта для ученика (${grade}) на тему: "${themeInput}". Соблюдай правила орфографии, пунктуации и объем слов строго по стандартам для ${grade}. Выведи только сам текст диктанта, без заголовков и пояснений.`;
     } else if (type === 'exercise') {
         prompt = `Ты опытный учитель русского языка. Составь тренировочное упражнение для ученика (${grade}) по теме "${themeInput}". Сначала напиши задание (например, вставь пропущенные буквы и расставь знаки препинания), затем напиши "РЕШЕНИЕ:" и приведи правильный вариант с подробным объяснением орфограмм и пунктограмм. Пиши на русском языке.`;
     } else {
-        const comp = document.getElementById('taskComplexity').value;
+        const compEl = document.getElementById('taskComplexity');
+        const comp = compEl ? compEl.value : 'средняя';
         const subjectTitle = SUBJECTS_CONFIG[type] ? SUBJECTS_CONFIG[type].title : type;
-        prompt = `Ты опытный учитель по предмету "${subjectTitle}". Придумай учебное задание или задачу для ученика (${grade}) по теме "${themeInput}". Сложность: ${comp}. Сначала напиши условие задания, затем напиши "РЕШЕНИЕ:" и распиши подробное пошаговое решение/разбор с объяснениями, понятными ученику в ${grade}. ${mathRule} Пиши на русском языке.`;
+        prompt = `Ты опытный учитель по предмету "${subjectTitle}". Придумай учебное задание или задачу для ученика (${grade}) по теме "${themeInput}". Сложность: ${comp}. Сначала напиши условие задания, затем напиши "РЕШЕНИЕ:" и распиши подробное пошаговое решение и разбор с объяснениями, понятными ученику в ${grade}. ${mathRule} Пиши на русском языке.`;
     }
 
     try {
@@ -518,9 +574,9 @@ async function generateAIText(type) {
         const data = await res.json();
         
         if (data.text) {
-            let cleanText = !isTextOnlyMode ? formatMathText(data.text, isMathSubj) : data.text;
-            let displayHtml = cleanText.replace(/
-/g, '<br>');
+            const isMath = MATH_SUBJECTS.includes(type);
+            let cleanText = !isTextOnlyMode ? formatMathText(data.text, isMath) : data.text;
+            let displayHtml = cleanText.replace(/\n/g, '<br>');
 
             if (!isTextOnlyMode) {
                 displayHtml = displayHtml.replace(/РЕШЕНИЕ:/gi, '<br><br><strong style="color:var(--primary); font-size:1.2rem;">Решение и разбор:</strong><br>');
@@ -529,11 +585,11 @@ async function generateAIText(type) {
             resultBox.innerHTML = `
                 <div class="task-display" id="taskOutput" style="line-height: 1.8; font-size: 1.05rem;">${displayHtml}</div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
-                    <button class="btn btn-outline" onclick="generateAIText('${type}')">🔄 Другой вариант</button>
-                    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#resultBox .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
+                    <button type="button" class="btn btn-outline regen-btn" data-gentype="${escapeHtml(type)}">🔄 Другой вариант</button>
+                    <button type="button" class="btn btn-secondary copy-btn" data-copy-target="taskOutput">📋 Скопировать</button>
                 </div>
             `;
-            if (isMathSubj) {
+            if (isMath) {
                 renderKatexInElement(document.getElementById('taskOutput'));
             }
         } else {
@@ -548,7 +604,8 @@ async function generateAIText(type) {
 }
 
 async function askAI() {
-    const input = document.getElementById('aiInput').value.trim();
+    const aiInputEl = document.getElementById('aiInput');
+    const input = aiInputEl ? aiInputEl.value.trim() : '';
     if (!input) return;
 
     const now = Date.now();
@@ -578,8 +635,7 @@ async function askAI() {
         const data = await res.json();
         
         if (data.text) {
-            const formatted = formatMathText(data.text, true).replace(/
-/g, '<br>');
+            const formatted = formatMathText(data.text, true).replace(/\n/g, '<br>');
             responseBox.innerHTML = formatted;
             renderKatexInElement(responseBox);
         } else {
@@ -593,9 +649,11 @@ async function askAI() {
     }
 }
 
-function handleGlobalSearch() {
-    const rawQ = searchInput.value.trim();
-    const q = rawQ.toLowerCase();
+function handleSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+    const rawQuery = searchInput.value.trim();
+    const q = rawQuery.toLowerCase();
     if (!q) return;
 
     const keywordMap = [
@@ -604,7 +662,7 @@ function handleGlobalSearch() {
         { subject: 'geometry', keys: ['треугольник', 'окружност', 'площад', 'пифагор', 'вектор', 'геометри', 'угол'] },
         { subject: 'probability', keys: ['вероятност', 'статистик', 'медиан', 'комбинатор', 'граф', 'случайн'] },
         { subject: 'physics', keys: ['скорост', 'ток', 'сила', 'физик', 'ньютон', 'ом', 'мощност', 'теплот'] },
-        { subject: 'chemistry', keys: ['хими', 'моль', 'реакц', 'кислот', 'оксид', 'валентн', 'атом', 'таблиц менделеев'] },
+        { subject: 'chemistry', keys: ['хими', 'моль', 'реакц', 'кислот', 'оксид', 'валентн', 'атом', 'менделеев'] },
         { subject: 'biology', keys: ['биолог', 'клетк', 'фотосинтез', 'генетик', 'мендел', 'анатом', 'эволюц'] },
         { subject: 'geography', keys: ['географ', 'климат', 'координат', 'рельеф', 'материк', 'океан', 'погод'] },
         { subject: 'history', keys: ['истор', 'петр', 'войн', 'русь', 'княз', 'реформ', 'ссср', 'век'] },
@@ -615,13 +673,12 @@ function handleGlobalSearch() {
     ];
 
     const matched = keywordMap.find(item => item.keys.some(k => q.includes(k)));
-    const isHomeworkQuery = q.includes('дз') || q.includes('домашн') || q.includes('помоги') || q.includes('решить');
 
-    if (isHomeworkQuery) {
+    if (q.includes('дз') || q.includes('домашн') || q.includes('помоги решить')) {
         openHomeworkForSubject(matched ? matched.subject : 'algebra');
         setTimeout(() => {
             const hwInput = document.getElementById('hwTaskInput');
-            if (hwInput) hwInput.value = rawQ;
+            if (hwInput) hwInput.value = rawQuery;
         }, 50);
         return;
     }
@@ -636,24 +693,138 @@ function handleGlobalSearch() {
                 else renderRussianGenerator('exercise');
             }
             const themeEl = document.getElementById('themeInput');
-            if (themeEl) themeEl.value = rawQ;
+            if (themeEl) themeEl.value = rawQuery;
         }, 50);
     } else {
-        document.querySelector('[data-subject="ai"]').click();
+        const aiBtnNav = document.querySelector('[data-subject="ai"]');
+        if (aiBtnNav) aiBtnNav.click();
         setTimeout(() => {
-            document.getElementById('aiInput').value = rawQ;
-            askAI();
+            const aiInput = document.getElementById('aiInput');
+            if (aiInput) {
+                aiInput.value = rawQuery;
+                askAI();
+            }
         }, 50);
     }
 }
 
-searchBtn.addEventListener('click', handleGlobalSearch);
-searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        handleGlobalSearch();
-    }
-});
+document.addEventListener('DOMContentLoaded', () => {
+    const contentArea = document.getElementById('contentArea');
+    const aiArea = document.getElementById('aiArea');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const aiSymBox = document.getElementById('aiSymbols');
+    const aiInput = document.getElementById('aiInput');
+    const aiBtn = document.getElementById('aiBtn');
 
-// Запуск стартового экрана
-renderSubject('russian');
+    if (aiSymBox) {
+        aiSymBox.innerHTML = buildSymbolBar('aiInput', 'ai');
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.textContent = isDark ? '🌙' : '☀️';
+        });
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentSubject = btn.dataset.subject;
+            
+            if (currentSubject === 'ai') {
+                if (contentArea) contentArea.style.display = 'none';
+                if (aiArea) aiArea.style.display = 'block';
+            } else if (currentSubject === 'homework') {
+                if (contentArea) contentArea.style.display = 'block';
+                if (aiArea) aiArea.style.display = 'none';
+                renderHomeworkHelper();
+            } else {
+                if (contentArea) contentArea.style.display = 'block';
+                if (aiArea) aiArea.style.display = 'none';
+                renderSubject(currentSubject);
+            }
+        });
+    });
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', handleSearch);
+    }
+    if (searchInput) {
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+    }
+    if (aiBtn) {
+        aiBtn.addEventListener('click', askAI);
+    }
+    if (aiInput) {
+        aiInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') askAI();
+        });
+    }
+
+    document.body.addEventListener('click', (e) => {
+        const topicChip = e.target.closest('.topic-chip');
+        if (topicChip) {
+            document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected-chip'));
+            topicChip.classList.add('selected-chip');
+            const input = document.getElementById('themeInput');
+            if (input) {
+                input.value = topicChip.dataset.topic || '';
+                input.focus();
+            }
+            return;
+        }
+
+        const symBtn = e.target.closest('.sym-btn');
+        if (symBtn) {
+            insertSym(symBtn.dataset.target, symBtn.dataset.sym);
+            return;
+        }
+
+        const rusModeBtn = e.target.closest('.rus-mode-btn');
+        if (rusModeBtn) {
+            renderRussianGenerator(rusModeBtn.dataset.mode);
+            return;
+        }
+
+        const openHwBtn = e.target.closest('.open-hw-btn');
+        if (openHwBtn) {
+            openHomeworkForSubject(openHwBtn.dataset.subj || 'algebra');
+            return;
+        }
+
+        if (e.target.id === 'genBtn' || e.target.closest('.regen-btn')) {
+            const btnEl = e.target.id === 'genBtn' ? e.target : e.target.closest('.regen-btn');
+            generateAIText(btnEl.dataset.gentype);
+            return;
+        }
+
+        if (e.target.id === 'hwGenBtn') {
+            generateHomeworkHelp();
+            return;
+        }
+
+        if (e.target.id === 'hwClearBtn') {
+            const hwInput = document.getElementById('hwTaskInput');
+            if (hwInput) hwInput.value = '';
+            return;
+        }
+
+        const copyBtn = e.target.closest('.copy-btn');
+        if (copyBtn) {
+            const targetEl = document.getElementById(copyBtn.dataset.copyTarget);
+            if (targetEl && navigator.clipboard) {
+                navigator.clipboard.writeText(targetEl.innerText);
+                copyBtn.textContent = 'Скопировано!';
+            }
+        }
+    });
+
+    renderSubject('russian');
+});

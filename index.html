@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>МБОУ СОШ №1 — Умный помощник для учителей и учеников</title>
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=11">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
@@ -28,37 +28,36 @@
         <div class="sidebar">
             <h2>Инструменты</h2>
             <nav id="toolsNav" style="margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem;">
-                <button class="nav-btn homework-btn" data-subject="homework">🎒 Помощь с ДЗ</button>
-                <button class="nav-btn ai-special-btn" data-subject="ai">🤖 Свободный чат с ИИ</button>
+                <button type="button" class="nav-btn homework-btn" data-subject="homework">🎒 Помощь с ДЗ</button>
+                <button type="button" class="nav-btn ai-special-btn" data-subject="ai">🤖 Свободный чат с ИИ</button>
             </nav>
 
             <h2>Предметы</h2>
             <nav id="subjectNav">
-                <button class="nav-btn active" data-subject="russian">📖 Русский язык</button>
-                <button class="nav-btn" data-subject="literature">📚 Литература</button>
-                <button class="nav-btn" data-subject="algebra">📐 Алгебра</button>
-                <button class="nav-btn" data-subject="geometry">📏 Геометрия</button>
-                <button class="nav-btn" data-subject="probability">🎲 Вероятность и статистика</button>
-                <button class="nav-btn" data-subject="physics">⚛️ Физика</button>
-                <button class="nav-btn" data-subject="chemistry">🧪 Химия</button>
-                <button class="nav-btn" data-subject="biology">🧬 Биология</button>
-                <button class="nav-btn" data-subject="geography">🌍 География</button>
-                <button class="nav-btn" data-subject="history">🏛️ История</button>
-                <button class="nav-btn" data-subject="social">⚖️ Обществознание</button>
-                <button class="nav-btn" data-subject="english">🇬🇧 Английский язык</button>
-                <button class="nav-btn" data-subject="informatics">💻 Информатика</button>
+                <button type="button" class="nav-btn active" data-subject="russian">📖 Русский язык</button>
+                <button type="button" class="nav-btn" data-subject="literature">📚 Литература</button>
+                <button type="button" class="nav-btn" data-subject="algebra">📐 Алгебра</button>
+                <button type="button" class="nav-btn" data-subject="geometry">📏 Геометрия</button>
+                <button type="button" class="nav-btn" data-subject="probability">🎲 Вероятность и статистика</button>
+                <button type="button" class="nav-btn" data-subject="physics">⚛️ Физика</button>
+                <button type="button" class="nav-btn" data-subject="chemistry">🧪 Химия</button>
+                <button type="button" class="nav-btn" data-subject="biology">🧬 Биология</button>
+                <button type="button" class="nav-btn" data-subject="geography">🌍 География</button>
+                <button type="button" class="nav-btn" data-subject="history">🏛️ История</button>
+                <button type="button" class="nav-btn" data-subject="social">⚖️ Обществознание</button>
+                <button type="button" class="nav-btn" data-subject="english">🇬🇧 Английский язык</button>
+                <button type="button" class="nav-btn" data-subject="informatics">💻 Информатика</button>
             </nav>
         </div>
 
         <div class="main-content">
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Быстрый поиск темы или вопроса (например: Дроби, Пётр I, Present Simple)...">
-                <button id="searchBtn">🔍 Найти</button>
+                <button type="button" id="searchBtn">🔍 Найти</button>
             </div>
             
             <div id="contentArea" class="content-area"></div>
 
-            <!-- Блок свободного чата с ИИ -->
             <div id="aiArea" class="content-area" style="display: none;">
                 <div class="generator-box" style="border-style: solid; text-align: left;">
                     <h3>🤖 Свободный чат с ИИ</h3>
@@ -66,7 +65,7 @@
                     <div id="aiSymbols" style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.6rem;"></div>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
                         <input type="text" id="aiInput" placeholder="Например: Составь план урока по теме «Глагол» для 5 класса" style="flex: 1; min-width: 240px; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-solid); background: var(--surface-solid); color: var(--text-main); outline: none;">
-                        <button onclick="askAI()" class="btn" id="aiBtn">Спросить</button>
+                        <button type="button" class="btn" id="aiBtn">Спросить</button>
                     </div>
                     <div id="aiResponse" style="padding: 1.2rem; background: var(--bg-color); border-radius: 10px; min-height: 50px; display: none; white-space: pre-wrap; line-height: 1.7; border: 1px solid var(--border-solid);"></div>
                 </div>
@@ -74,7 +73,6 @@
         </div>
     </main>
 
-    <script src="data.js"></script>
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=11"></script>
 </body>
 </html>
