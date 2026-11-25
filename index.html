@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>МБОУ СОШ №1 — Умный помощник для учителей и учеников</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=6">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span class="role-badge">👩‍🏫 Учителям и 🎒 Ученикам</span>
+            <span class="role-badge">Учителям и ученикам</span>
             <button id="themeToggle" class="theme-btn" title="Сменить тему">🌙</button>
         </div>
     </header>
@@ -28,11 +28,11 @@
         <div class="sidebar">
             <h2>Инструменты</h2>
             <nav id="toolsNav" style="margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem;">
-                <button class="nav-btn homework-btn" data-subject="homework">🎒 Помощь с ДЗ (не ГДЗ)</button>
+                <button class="nav-btn homework-btn" data-subject="homework">🎒 Помощь с ДЗ</button>
                 <button class="nav-btn ai-special-btn" data-subject="ai">🤖 Свободный чат с ИИ</button>
             </nav>
 
-            <h2>Предметы (ФГОС)</h2>
+            <h2>Предметы</h2>
             <nav id="subjectNav">
                 <button class="nav-btn active" data-subject="russian">📖 Русский язык</button>
                 <button class="nav-btn" data-subject="literature">📚 Литература</button>
@@ -75,6 +75,6 @@
     </main>
 
     <script src="data.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=6"></script>
 </body>
 </html>

@@ -122,13 +122,8 @@ const SUBJECTS_CONFIG = {
     }
 };
 
-function escapeHtmlAttr(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/'/g, '&#39;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+function escapeAttr(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
 }
 
 function insertSym(inputId, sym) {
@@ -147,12 +142,22 @@ function insertSym(inputId, sym) {
 
 function buildSymbolBar(inputId, subject) {
     const syms = SYMBOL_SETS[subject] || SYMBOL_SETS.ai;
-    return syms.map(s => `<button type="button" class="btn btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.9rem; min-width: 36px;" onclick="insertSym('${inputId}', '${escapeHtmlAttr(s)}')">${s}</button>`).join('');
+    return syms.map(s => `<button type="button" class="btn btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.9rem; min-width: 36px;" onclick="insertSym('${inputId}', '${escapeAttr(s)}')">${s}</button>`).join('');
 }
 
 const aiSymBox = document.getElementById('aiSymbols');
 if (aiSymBox) {
     aiSymBox.innerHTML = buildSymbolBar('aiInput', 'ai');
+}
+
+const aiInputEl = document.getElementById('aiInput');
+if (aiInputEl) {
+    aiInputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            askAI();
+        }
+    });
 }
 
 themeToggle.addEventListener('click', () => {
@@ -196,19 +201,14 @@ function getAllSubjectOptions(selectedKey = 'algebra') {
         .join('');
 }
 
-function selectTopicChip(btn) {
+function selectTopicChip(btn, topicText) {
     document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected-chip'));
     btn.classList.add('selected-chip');
-    const topicText = btn.dataset.topic || btn.textContent;
     const input = document.getElementById('themeInput');
     if (input) {
         input.value = topicText;
         input.focus();
     }
-}
-
-function buildTopicChipsHtml(topics) {
-    return topics.map(t => `<button type="button" class="btn btn-outline topic-chip" data-topic="${escapeHtmlAttr(t)}" onclick="selectTopicChip(this)">${t}</button>`).join('');
 }
 
 function renderSubject(subject) {
@@ -228,7 +228,7 @@ function renderRussianMenu() {
                 <button class="btn" onclick="renderRussianGenerator('essay')">📝 Сочинение на любую тему</button>
                 <button class="btn btn-outline" onclick="renderRussianGenerator('dictation')">✍️ Диктант на любую тему</button>
                 <button class="btn btn-outline" onclick="renderRussianGenerator('exercise')">🧩 Тренировочное задание</button>
-                <button class="btn btn-hw" onclick="openHomeworkForSubject('russian')">🎒 Разобрать ДЗ (не ГДЗ)</button>
+                <button class="btn btn-hw" onclick="openHomeworkForSubject('russian')">🎒 Помощь с ДЗ</button>
             </div>
         </div>
         <div id="russianResult"></div>
@@ -238,7 +238,7 @@ function renderRussianMenu() {
 
 function renderRussianGenerator(type) {
     const sub = SUBJECTS_CONFIG.russian;
-    const topicsHtml = buildTopicChipsHtml(sub.types);
+    const topicsHtml = sub.types.map(t => `<button type="button" class="btn btn-outline topic-chip" onclick="selectTopicChip(this, '${escapeAttr(t)}')">${t}</button>`).join('');
     
     const titles = {
         essay: '📝 Сочинение-рассуждение',
@@ -271,7 +271,7 @@ function renderRussianGenerator(type) {
 
 function renderSubjectMenu(subject) {
     const sub = SUBJECTS_CONFIG[subject];
-    const buttonsHtml = buildTopicChipsHtml(sub.types);
+    const buttonsHtml = sub.types.map(t => `<button type="button" class="btn btn-outline topic-chip" onclick="selectTopicChip(this, '${escapeAttr(t)}')">${t}</button>`).join('');
     const hasSymbols = Boolean(SYMBOL_SETS[subject]);
     const symBarHtml = hasSymbols ? `<div style="display: flex; justify-content: center; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.8rem;">${buildSymbolBar('themeInput', subject)}</div>` : '';
     const desc = sub.description || 'Выберите класс и тему. ИИ составит задание по школьной программе и распишет подробное решение.';
@@ -314,7 +314,7 @@ function openHomeworkForSubject(subjectKey) {
 function renderHomeworkHelper(preselectedSubject = 'algebra') {
     contentArea.innerHTML = `
         <div class="generator-box" style="text-align: left;">
-            <h3>🎒 Умный помощник с домашним заданием (не ГДЗ)</h3>
+            <h3>🎒 Умный помощник с домашним заданием</h3>
             <p style="margin-bottom: 1rem;">Вставь условие задачи, правило или текст упражнения. Нейросеть поможет разобраться в теме, покажет похожий пример и даст пошаговые подсказки, чтобы ты смог решить сам.</p>
             
             <div class="hw-notice">
@@ -342,7 +342,7 @@ function renderHomeworkHelper(preselectedSubject = 'algebra') {
                 ${buildSymbolBar('hwTaskInput', preselectedSubject)}
             </div>
 
-            <textarea id="hwTaskInput" class="hw-textarea" placeholder="Вставь сюда текст задания из учебника или напиши свой ход решения, если хочешь его проверить..."></textarea>
+            <textarea id="hwTaskInput" class="hw-textarea" placeholder="Впишите сюда условие задачи, предложение для разбора, вопрос по теме или свой черновик решения..."></textarea>
 
             <div class="controls" style="justify-content: flex-start;">
                 <button class="btn btn-hw" id="hwGenBtn" onclick="generateHomeworkHelp()">Помочь разобраться</button>
@@ -416,16 +416,17 @@ ${taskText}`;
         const data = await res.json();
 
         if (data.text) {
-            const useMath = MATH_SUBJECTS.includes(subjKey);
-            const cleanText = formatMathText(data.text, useMath);
-            const displayHtml = cleanText.replace(/\n/g, '<br>');
+            const isMathSubj = MATH_SUBJECTS.includes(subjKey);
+            const cleanText = formatMathText(data.text, isMathSubj);
+            const displayHtml = cleanText.replace(/
+/g, '<br>');
             resultBox.innerHTML = `
                 <div class="task-display" id="hwOutput" style="line-height: 1.8;">${displayHtml}</div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#hwOutput').innerText); this.textContent='Скопировано!'">📋 Скопировать разбор</button>
                 </div>
             `;
-            if (useMath) {
+            if (isMathSubj) {
                 renderKatexInElement(document.getElementById('hwOutput'));
             }
         } else {
@@ -442,13 +443,13 @@ ${taskText}`;
 function formatMathText(text, enableFractions = true) {
     let cleaned = text
         .replace(/\*\*/g, '')
-        .replace(/([0-9a-zA-Zа-яА-Я)])\s*\*\s*([0-9a-zA-Zа-яА-Я(])/g, '$1 × $2')
+        .replace(/([0-9a-zA-Zа-яА-ЯёЁ\)])\s*\*\s*([0-9a-zA-Zа-яА-ЯёЁ\(])/g, '$1 × $2')
         .replace(/\^2/g, '²')
         .replace(/\^3/g, '³');
     
     if (enableFractions) {
-        cleaned = cleaned.replace(/(\d+)\s*\/\s*(\d+)/g, function(match, num, den) {
-            return `\\(\\frac{${num}}{${den}}\\)`;
+        cleaned = cleaned.replace(/(^|[\s(=+\-×÷])(\d{1,3})\s*\/\s*(\d{1,3})(?=[\s).,;!?=+\-×÷]|$)/g, function(match, prefix, num, den) {
+            return `${prefix}\(\frac{${num}}{${den}}\)`;
         });
     }
     return cleaned;
@@ -459,7 +460,7 @@ function renderKatexInElement(el) {
         window.renderMathInElement(el, {
             delimiters: [
                 { left: '$$', right: '$$', display: true },
-                { left: '\\(', right: '\\)', display: false }
+                { left: '\(', right: '\)', display: false }
             ],
             throwOnError: false
         });
@@ -493,6 +494,7 @@ async function generateAIText(type) {
 
     let prompt = "";
     const isTextOnlyMode = (type === 'essay' || type === 'dictation');
+    const isMathSubj = MATH_SUBJECTS.includes(type);
 
     if (type === 'essay') {
         prompt = `Ты опытный учитель русского языка и литературы. Напиши школьное сочинение-рассуждение для ученика (${grade}) на тему: "${themeInput}". Соблюдай требования ФГОС и уровень словарного запаса, подходящий строго для ${grade}. Структура: вступление, 2 аргумента, заключение. Пиши на русском языке.`;
@@ -516,9 +518,9 @@ async function generateAIText(type) {
         const data = await res.json();
         
         if (data.text) {
-            const useMath = MATH_SUBJECTS.includes(type);
-            let cleanText = !isTextOnlyMode ? formatMathText(data.text, useMath) : data.text;
-            let displayHtml = cleanText.replace(/\n/g, '<br>');
+            let cleanText = !isTextOnlyMode ? formatMathText(data.text, isMathSubj) : data.text;
+            let displayHtml = cleanText.replace(/
+/g, '<br>');
 
             if (!isTextOnlyMode) {
                 displayHtml = displayHtml.replace(/РЕШЕНИЕ:/gi, '<br><br><strong style="color:var(--primary); font-size:1.2rem;">Решение и разбор:</strong><br>');
@@ -531,7 +533,7 @@ async function generateAIText(type) {
                     <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.querySelector('#resultBox .task-display').innerText); this.textContent='Скопировано!'">📋 Скопировать</button>
                 </div>
             `;
-            if (useMath) {
+            if (isMathSubj) {
                 renderKatexInElement(document.getElementById('taskOutput'));
             }
         } else {
@@ -576,7 +578,8 @@ async function askAI() {
         const data = await res.json();
         
         if (data.text) {
-            const formatted = formatMathText(data.text, true).replace(/\n/g, '<br>');
+            const formatted = formatMathText(data.text, true).replace(/
+/g, '<br>');
             responseBox.innerHTML = formatted;
             renderKatexInElement(responseBox);
         } else {
@@ -612,13 +615,14 @@ function handleGlobalSearch() {
     ];
 
     const matched = keywordMap.find(item => item.keys.some(k => q.includes(k)));
+    const isHomeworkQuery = q.includes('дз') || q.includes('домашн') || q.includes('помоги') || q.includes('решить');
 
-    if (q.includes('дз') || q.includes('домашн') || q.includes('помог')) {
+    if (isHomeworkQuery) {
         openHomeworkForSubject(matched ? matched.subject : 'algebra');
         setTimeout(() => {
             const hwInput = document.getElementById('hwTaskInput');
             if (hwInput) hwInput.value = rawQ;
-        }, 100);
+        }, 50);
         return;
     }
 
@@ -633,27 +637,23 @@ function handleGlobalSearch() {
             }
             const themeEl = document.getElementById('themeInput');
             if (themeEl) themeEl.value = rawQ;
-        }, 100);
+        }, 50);
     } else {
         document.querySelector('[data-subject="ai"]').click();
         setTimeout(() => {
             document.getElementById('aiInput').value = rawQ;
             askAI();
-        }, 100);
+        }, 50);
     }
 }
 
 searchBtn.addEventListener('click', handleGlobalSearch);
 searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') handleGlobalSearch();
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        handleGlobalSearch();
+    }
 });
-
-const aiInputEl = document.getElementById('aiInput');
-if (aiInputEl) {
-    aiInputEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') askAI();
-    });
-}
 
 // Запуск стартового экрана
 renderSubject('russian');
