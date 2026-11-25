@@ -190,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
             const data = await res.json();
-            if (!data.text) throw new Error();
+            if (!data.text) { box.innerHTML = `<div class="task-display" style="color:#ef4444;">Ответ сервера: ${esc(JSON.stringify(data))}</div>`; return null; }
+
             let txt = data.text.replace(/\*\*/g, '').replace(/(\d|\w|[а-яА-ЯёЁ\)\]])\s*\*\s*(\d|\w|[а-яА-ЯёЁ\(\[])/g, '$1 × $2').replace(/\^2/g, '²').replace(/\^3/g, '³');
             if (isMath) txt = txt.replace(/(^|[^\d\/])(\d{1,3})\s*\/\s*(\d{1,3})(?!\d|\/)/g, '$1\\(\\frac{$2}{$3}\\)');
             const html = txt.replace(/\n/g, '<br>').replace(/РЕШЕНИЕ:/gi, '<br><br><strong style="color:var(--primary);font-size:1.15rem;">Решение и разбор:</strong><br>');
