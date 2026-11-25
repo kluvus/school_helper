@@ -1,4 +1,4 @@
-window.PROXY_URL = "https://workers.dev";
+window.PROXY_URL = "https://ai-bridge-wine.vercel.app/api/chat";
 
 window.SYMBOL_SETS = {
     algebra: ['a/b', '√', 'x²', 'x³', '×', '÷', '±', '≠', '≤', '≥', 'π'],
