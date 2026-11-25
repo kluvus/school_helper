@@ -188,7 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
         box.style.display = 'block';
         box.innerHTML = `<div class="task-display">Нейросеть готовит ответ...</div>`;
         try {
-            const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+                        const res = await fetch(PROXY_URL + "?q=" + encodeURIComponent(prompt));
+
             const data = await res.json();
             if (!data.text) { box.innerHTML = `<div class="task-display" style="color:#ef4444;">Ответ сервера: ${esc(JSON.stringify(data))}</div>`; return null; }
 
