@@ -194,7 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!data.text) { box.innerHTML = `<div class="task-display" style="color:#ef4444;">Ответ сервера: ${esc(JSON.stringify(data))}</div>`; return null; }
 
             let txt = data.text.replace(/\*\*/g, '').replace(/(\d|\w|[а-яА-ЯёЁ\)\]])\s*\*\s*(\d|\w|[а-яА-ЯёЁ\(\[])/g, '$1 × $2').replace(/\^2/g, '²').replace(/\^3/g, '³');
-            if (isMath) txt = txt.replace(/(^|[^\d\/])(\d{1,3})\s*\/\s*(\d{1,3})(?!\d|\/)/g, '$1\\(\\frac{$2}{$3}\\)');
+                        if (isMath) txt = txt.replace(/\\frac\{(\d+)\}\{(\d+)\}/g, '$1/$2').replace(/\\\(|\\\)|\$\$/g, '').replace(/(^|[^\d\/])(\d{1,3})\s*\/\s*(\d{1,3})(?!\d|\/)/g, '$1<span style="display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:0.85em;line-height:1.05;margin:0 2px;"><span style="border-bottom:1px solid currentColor;">$2</span><span>$3</span></span>');
+
             const html = txt.replace(/\n/g, '<br>').replace(/РЕШЕНИЕ:/gi, '<br><br><strong style="color:var(--primary);font-size:1.15rem;">Решение и разбор:</strong><br>');
             box.innerHTML = `<div class="task-display">${html}</div>`;
             if (window.renderMathInElement) window.renderMathInElement(box, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
